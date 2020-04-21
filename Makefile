@@ -1,5 +1,5 @@
 CILIUM_MANIFESTS := \
-  cilium-1.7-eks.yaml \
+  management-cluster-core/cilium-1.7-eks.yaml \
   images/kubeadm-ubuntu/cilium-1.7-kubeadm.yaml
 
 manifest: $(CILIUM_MANIFESTS)
@@ -7,7 +7,7 @@ all: manifest images-push
 
 .PHONY: $(CILIUM_MANIFESTS) manifest images-build image-push test-cluster.yaml
 
-cilium-1.7-eks.yaml:
+management-cluster-core/cilium-1.7-eks.yaml:
 	helm template cilium cilium/cilium --version 1.7.2 \
 	  --set global.eni=true \
 	  --set global.egressMasqueradeInterfaces=eth0 \
