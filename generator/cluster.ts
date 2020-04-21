@@ -88,7 +88,7 @@ export class KubernetesCluster {
         const keyPrefix = "io.katacontainers.config"
 
         // TODO: this shouldn't be done here, we should fix the hotplug issue
-        let memory = "4096"
+        let memory = "5120"
         if (role === roles.node) {
             memory = "8192"
         }
