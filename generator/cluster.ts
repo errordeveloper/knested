@@ -515,7 +515,7 @@ export class KubernetesCluster {
             },
         ]
 
-        let command = [ "/sonobuoy", "run", "--kubeconfig=/etc/kubeadm/secrets/kubeconfig" ]
+        let command = [ "/sonobuoy", "run", "--kubeconfig=/etc/kubeadm/secrets/kubeconfig", "--wait=1440" ]
         if (args) {
             command.push(...args)
         }

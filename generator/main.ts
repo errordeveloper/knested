@@ -15,11 +15,11 @@ const cluster = new KubernetesCluster({
 })
 
 let output: { value: any, file: string }[] = [
-    { value: cluster.build(), file: `cluster-${namespace}-${name}.yaml` },
+    { value: cluster.build(), file: `cluster-${namespace}-${name}.core-resources.yaml` },
 ];
 
 if (param.Boolean("sonobuoy")) {
-    output.push({ value: cluster.sonobuoy("sonobuoy/sonobuoy:v0.18.0"), file: `cluster-${namespace}-${name}-sonobuoy-job.yaml` })
+    output.push({ value: cluster.sonobuoy("sonobuoy/sonobuoy:v0.18.0"), file: `cluster-${namespace}-${name}.sonobuoy-job.yaml` })
 }
 
 export default output
