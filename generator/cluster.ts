@@ -428,7 +428,11 @@ export class KubernetesCluster {
                 {
                     name: "KUBECONFIG",
                     value: kubeconfig,
-                }
+                },
+                {
+                    name: "CONTAINER_RUNTIME_ENDPOINT",
+                    value: "unix:///run/containerd/containerd.sock",
+                },
             ],
             volumeMounts,
             securityContext: {
