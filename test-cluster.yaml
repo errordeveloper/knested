@@ -108,6 +108,8 @@ items:
           env:
           - name: KUBECONFIG
             value: /etc/kubernetes/admin.conf
+          - name: CONTAINER_RUNTIME_ENDPOINT
+            value: unix:///run/containerd/containerd.sock
           image: errordeveloper/kubeadm@sha256:7ff703d72dce36c4d18899ed189a11b250c607cc2e7b01a675eeee21928eb43e
           imagePullPolicy: Always
           name: main
@@ -199,6 +201,8 @@ items:
           env:
           - name: KUBECONFIG
             value: /etc/kubernetes/kubelet.conf
+          - name: CONTAINER_RUNTIME_ENDPOINT
+            value: unix:///run/containerd/containerd.sock
           image: errordeveloper/kubeadm@sha256:7ff703d72dce36c4d18899ed189a11b250c607cc2e7b01a675eeee21928eb43e
           imagePullPolicy: Always
           name: main
