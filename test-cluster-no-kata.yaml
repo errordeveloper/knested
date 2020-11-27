@@ -1,0 +1,226 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: master
+    name: test-cluster
+    namespace: test-clusters-dev
+  spec:
+    ports:
+    - port: 6443
+      protocol: TCP
+      targetPort: 6443
+    selector:
+      cluster: test-cluster
+      role: master
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: master
+    name: test-cluster-master
+    namespace: test-clusters-dev
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    labels:
+      cluster: test-cluster
+    name: test-cluster-kubeconfig
+    namespace: test-clusters-dev
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    labels:
+      cluster: test-cluster
+    name: test-cluster-join-token
+    namespace: test-clusters-dev
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: master
+    name: test-cluster-master
+    namespace: test-clusters-dev
+  rules:
+  - apiGroups:
+    - ""
+    resourceNames:
+    - test-cluster-kubeconfig
+    - test-cluster-join-token
+    resources:
+    - secrets
+    verbs:
+    - get
+    - patch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: master
+    name: test-cluster-master
+    namespace: test-clusters-dev
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: test-cluster-master
+  subjects:
+  - kind: ServiceAccount
+    name: test-cluster-master
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: master
+    name: test-cluster-master
+    namespace: test-clusters-dev
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        cluster: test-cluster
+        role: master
+    template:
+      metadata:
+        labels:
+          cluster: test-cluster
+          role: master
+      spec:
+        automountServiceAccountToken: false
+        containers:
+        - command:
+          - /lib/systemd/systemd
+          - --unit=kubeadm@master.target
+          env:
+          - name: KUBECONFIG
+            value: /etc/kubernetes/admin.conf
+          image: errordeveloper/kubeadm@sha256:7ff703d72dce36c4d18899ed189a11b250c607cc2e7b01a675eeee21928eb43e
+          imagePullPolicy: Always
+          name: main
+          readinessProbe:
+            exec:
+              command:
+              - /usr/bin/is-master-ready.sh
+            failureThreshold: 500
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            successThreshold: 5
+          securityContext:
+            privileged: true
+          tty: true
+          volumeMounts:
+          - mountPath: /sys/fs/bpf
+            mountPropagation: Bidirectional
+            name: bpf-maps
+          - mountPath: /etc/kubeadm/metadata
+            name: metadata
+          - mountPath: /etc/parent-management-cluster/secrets
+            name: parent-management-cluster-service-account-token
+        serviceAccountName: test-cluster-master
+        volumes:
+        - hostPath:
+            path: /sys/fs/bpf
+            type: Directory
+          name: bpf-maps
+        - downwardAPI:
+            items:
+            - fieldRef:
+                fieldPath: metadata.labels
+              path: labels
+            - fieldRef:
+                fieldPath: metadata.namespace
+              path: namespace
+          name: metadata
+        - name: parent-management-cluster-service-account-token
+          projected:
+            sources:
+            - serviceAccountToken:
+                path: token
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: node
+    name: test-cluster-node
+    namespace: test-clusters-dev
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      cluster: test-cluster
+      role: node
+    name: test-cluster-node
+    namespace: test-clusters-dev
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        cluster: test-cluster
+        role: node
+    template:
+      metadata:
+        labels:
+          cluster: test-cluster
+          role: node
+      spec:
+        automountServiceAccountToken: false
+        containers:
+        - command:
+          - /lib/systemd/systemd
+          - --unit=kubeadm@node.target
+          env:
+          - name: KUBECONFIG
+            value: /etc/kubernetes/kubelet.conf
+          image: errordeveloper/kubeadm@sha256:7ff703d72dce36c4d18899ed189a11b250c607cc2e7b01a675eeee21928eb43e
+          imagePullPolicy: Always
+          name: main
+          readinessProbe:
+            exec:
+              command:
+              - /usr/bin/is-node-ready.sh
+            failureThreshold: 500
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            successThreshold: 5
+          securityContext:
+            privileged: true
+          tty: true
+          volumeMounts:
+          - mountPath: /sys/fs/bpf
+            mountPropagation: Bidirectional
+            name: bpf-maps
+          - mountPath: /etc/kubeadm/metadata
+            name: metadata
+          - mountPath: /etc/kubeadm/secrets
+            name: join-secret
+        serviceAccountName: test-cluster-node
+        volumes:
+        - hostPath:
+            path: /sys/fs/bpf
+            type: Directory
+          name: bpf-maps
+        - downwardAPI:
+            items:
+            - fieldRef:
+                fieldPath: metadata.labels
+              path: labels
+            - fieldRef:
+                fieldPath: metadata.namespace
+              path: namespace
+          name: metadata
+        - name: join-secret
+          projected:
+            sources:
+            - secret:
+                name: test-cluster-join-token
+                optional: false
+kind: List
