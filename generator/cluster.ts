@@ -448,8 +448,7 @@ export class KubernetesCluster {
                     annotations,
                 },
                 spec: {
-                    // TODO: this should be parametrised
-                    runtimeClassName: "kata-qemu",
+                    runtimeClassName: this.cluster.runtime?.class || undefined,
                     serviceAccountName: `${metadata.labels.cluster}-${role}`,
                     // systemd shaddows /run/secrets, so serviceaccount secrts are mounted differently
                     automountServiceAccountToken: false,

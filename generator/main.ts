@@ -7,12 +7,17 @@ const nodes = param.Number("nodes") || 2
 
 const image = param.String("image") || "errordeveloper/kubeadm:ubuntu-18.04-1.18.1"
 
-import { KubernetesCluster, runtimeClasses } from './cluster';
+import { KubernetesCluster, KubernetesClusterSpec, runtimeClasses } from './cluster';
 
-const cluster = new KubernetesCluster({
+const clusterSpec: KubernetesClusterSpec = {
     namespace, name, image, nodes,
-    runtime: {class: runtimeClasses.kataQemu},
-})
+}
+
+if (param.Boolean("kata")) {
+  clusterSpec.runtime = {class: runtimeClasses.kataQemu}
+}
+
+const cluster = new KubernetesCluster(clusterSpec)
 
 let output: { value: any, file: string }[] = [
     { value: cluster.build(), file: `cluster-${namespace}-${name}.core-resources.yaml` },

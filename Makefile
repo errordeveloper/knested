@@ -31,9 +31,17 @@ show-digests:
 test-cluster.yaml:
 	cd generator && npx tsc
 	jk generate generator/main.js --stdout \
+	  --parameter kata=true \
 	  --parameter nodes=10 \
 	  --parameter name=test-cluster \
 	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.18\.2/ { print $$2 }') \
 	> test-cluster.yaml
 
-
+test-cluster-without-kata.yaml:
+	cd generator && npx tsc
+	jk generate generator/main.js --stdout \
+	  --parameter kata=false \
+	  --parameter nodes=3 \
+	  --parameter name=test-cluster \
+	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.18\.2/ { print $$2 }') \
+	> test-cluster.yaml
