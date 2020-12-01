@@ -5,7 +5,7 @@ CILIUM_MANIFESTS := \
 manifest: $(CILIUM_MANIFESTS)
 all: manifest images-push
 
-.PHONY: $(CILIUM_MANIFESTS) manifest images-build image-push test-cluster.yaml
+.PHONY: $(CILIUM_MANIFESTS) manifest images-build image-push test-cluster.yaml test-cluster-without-kata.yaml
 
 management-cluster-core/cilium-1.7-eks.yaml:
 	helm template cilium cilium/cilium --version 1.7.2 \
@@ -28,14 +28,17 @@ images-push:
 show-digests:
 	-@cat images/*/.digest 2>/dev/null
 
+NAMESPACE ?= default
+
 test-cluster.yaml:
 	cd generator && npx tsc
 	jk generate generator/main.js --stdout \
 	  --parameter kata=true \
 	  --parameter nodes=10 \
 	  --parameter name=test-cluster \
-	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.18\.2/ { print $$2 }') \
-	> test-cluster.yaml
+	  --parameter namespace=$(NAMESPACE) \
+	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.19\.4/ { print $$2 }') \
+	> $@
 
 test-cluster-without-kata.yaml:
 	cd generator && npx tsc
@@ -43,5 +46,6 @@ test-cluster-without-kata.yaml:
 	  --parameter kata=false \
 	  --parameter nodes=3 \
 	  --parameter name=test-cluster \
-	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.18\.2/ { print $$2 }') \
-	> test-cluster.yaml
+	  --parameter namespace=$(NAMESPACE) \
+	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.19\.4/ { print $$2 }') \
+	> $@
