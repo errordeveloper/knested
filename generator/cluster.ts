@@ -227,7 +227,7 @@ export class KubernetesCluster {
                 // TODO consider adding initContainers to wait for /var/images to have the right files, or at least some file
                 name: "images",
                 hostPath: {
-                    type: "Directory",
+                    type: "DirectoryOrCreate",
                     path: "/var/lib/images",
                 },
             },
