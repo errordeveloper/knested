@@ -281,13 +281,6 @@ export class KubernetesCluster {
         if (!useKata) {
             commonVolumes.push(...[
                 {
-                    name: "proc",
-                    hostPath: {
-                        type: "Directory",
-                        path: "/proc",
-                    },
-                },
-                {
                     name: "lib-modules",
                     hostPath: {
                         type: "Directory",
@@ -304,10 +297,6 @@ export class KubernetesCluster {
             ])
 
             commonVolumeMounts.push(...[
-                {
-                    name: "proc",
-                    mountPath: "/proc",
-                },
                 {
                     name: "lib-modules",
                     mountPath: "/lib/modules",
