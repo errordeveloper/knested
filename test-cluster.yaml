@@ -121,6 +121,13 @@ items:
             initialDelaySeconds: 30
             periodSeconds: 2
             successThreshold: 5
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 5120Mi
+            requests:
+              cpu: 2000m
+              memory: 5120Mi
           securityContext:
             privileged: true
           tty: true
@@ -214,6 +221,13 @@ items:
             initialDelaySeconds: 30
             periodSeconds: 2
             successThreshold: 5
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 8192Mi
+            requests:
+              cpu: 2000m
+              memory: 8192Mi
           securityContext:
             privileged: true
           tty: true
