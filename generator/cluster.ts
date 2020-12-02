@@ -85,14 +85,24 @@ export class KubernetesCluster {
         }
     }
 
+    private getMemoryAndCPU(role: roles): [number, number] {
+                // TODO: expose these to the API
+                let memory = 5120
+                if (role === roles.node) {
+                    memory = 8192
+                }
+
+                const cpus = 2
+
+                return [memory, cpus]
+    }
+
     private makeKataAnnotations(role: roles) {
         const keyPrefix = "io.katacontainers.config"
 
         // TODO: this shouldn't be done here, we should fix the hotplug issue
-        let memory = "5120"
-        if (role === roles.node) {
-            memory = "8192"
-        }
+
+        let [memory, cpus] = this.getMemoryAndCPU(role)
 
         return {
             [`${keyPrefix}_path`]: this.cluster.runtime?.kata?.config || kataConfigs.default,
@@ -100,8 +110,8 @@ export class KubernetesCluster {
             [`${keyPrefix}.hypervisor.kernel`]: this.cluster.runtime?.kata?.kernel || kataKernels.default,
             // TODO: check if CONFIG_MEMORY_HOTPLUG is set, as kata relies on that;
             // normally one should use container resource limits/request
-            [`${keyPrefix}.hypervisor.default_memory`]: memory,
-            [`${keyPrefix}.hypervisor.default_vcpus`]: "2",
+            [`${keyPrefix}.hypervisor.default_memory`]: `${memory}`,
+            [`${keyPrefix}.hypervisor.default_vcpus`]: `${cpus}`,
         }
     }
 
@@ -410,6 +420,8 @@ export class KubernetesCluster {
                 break;
         }
 
+        let [memory, cpus] = this.getMemoryAndCPU(role)
+
         const containers = [{
             name: "main",
             image: this.cluster.image,
@@ -434,6 +446,16 @@ export class KubernetesCluster {
                 privileged: true,
             },
             tty: true,
+            resources: {
+                requests: {
+                  memory: `${memory}Mi`,
+                  cpu:`${cpus}000m`,
+                },
+                limits: {
+                  memory: `${memory}Mi`,
+                  cpu: `${cpus}000m`,
+                },
+            }
         }]
 
         return {
