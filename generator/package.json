@@ -10,7 +10,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "typescript": "^3.8.3"
+    "typescript": "^4.1.2"
   },
   "dependencies": {
     "@jkcfg/std": "^0.4.0"

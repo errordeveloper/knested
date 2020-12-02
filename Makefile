@@ -37,6 +37,7 @@ test-cluster.yaml:
 	  --parameter nodes=10 \
 	  --parameter name=test-cluster \
 	  --parameter namespace=$(NAMESPACE) \
+	  --parameter with-image-cache=true \
 	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.19\.4/ { print $$2 }') \
 	> $@
 

@@ -7,6 +7,7 @@ const nodes = param.Number("nodes") || 2
 
 const image = param.String("image") || "errordeveloper/kubeadm:ubuntu-18.04-1.18.1"
 
+
 import { KubernetesCluster, KubernetesClusterSpec, runtimeClasses } from './cluster';
 
 const clusterSpec: KubernetesClusterSpec = {
@@ -15,6 +16,10 @@ const clusterSpec: KubernetesClusterSpec = {
 
 if (param.Boolean("kata")) {
   clusterSpec.runtime = {class: runtimeClasses.kataQemu}
+}
+
+if (param.Boolean("with-image-cache")) {
+  clusterSpec.withImageCache = true
 }
 
 const cluster = new KubernetesCluster(clusterSpec)

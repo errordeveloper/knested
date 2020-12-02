@@ -45,6 +45,7 @@ export interface KubernetesClusterSpec {
     image: string
     nodes: number
     runtime?: RuntimeSpec
+    withImageCache?: boolean
 }
 
 export interface RuntimeSpec {
@@ -224,14 +225,6 @@ export class KubernetesCluster {
 
         const commonVolumes:object[] = [
             {
-                // TODO consider adding initContainers to wait for /var/images to have the right files, or at least some file
-                name: "images",
-                hostPath: {
-                    type: "DirectoryOrCreate",
-                    path: "/var/lib/images",
-                },
-            },
-            {
                 name: "bpf-maps",
                 hostPath: {
                     type: "Directory",
@@ -239,6 +232,16 @@ export class KubernetesCluster {
                 },
             },
         ]
+        if  (this.cluster.withImageCache) {
+             commonVolumes.push({
+                 // TODO consider adding initContainers to wait for /var/images to have the right files, or at least some file
+                 name: "images",
+                 hostPath: {
+                     type: "Directory",
+                     path: "/var/lib/images",
+                 },
+             })
+        }
 
         // TODO: generate kubeadm configs here?
         // TODO: consider generating scripts and systemd units also, so image can be more static...
@@ -264,10 +267,6 @@ export class KubernetesCluster {
 
         const commonVolumeMounts:object[] = [
             {
-                name: "images",
-                mountPath: "/images",
-            },
-            {
                 name: "bpf-maps",
                 mountPath: "/sys/fs/bpf",
                 mountPropagation: "Bidirectional", // required due to nesting, so that cilium pod can use
@@ -277,6 +276,13 @@ export class KubernetesCluster {
                 mountPath: "/etc/kubeadm/metadata",
             },
         ]
+
+        if  (this.cluster.withImageCache) {
+             commonVolumeMounts.push({
+                 name: "images",
+                 mountPath: "/images",
+             })
+        }
 
         if (!useKata) {
             commonVolumes.push(...[
