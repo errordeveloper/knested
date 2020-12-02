@@ -217,7 +217,7 @@ Type=oneshot
 EnvironmentFile=/etc/versions.env
 EOF
 
-systemctl enable kubeadm@.service
+systemctl enable kubeadm@master.service kubeadm@node.service
 
 mkdir  /etc/systemd/system/kubeadm@master.service.d
 cat > /etc/systemd/system/kubeadm@master.service.d/master.conf << EOF
