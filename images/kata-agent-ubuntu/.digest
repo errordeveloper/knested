@@ -1,2 +1,2 @@
-errordeveloper/kata-agent:c3ba09430-ubuntu-18.04 errordeveloper/kata-agent@sha256:ba679ea71a17b47b704fe939323a675eb1cdf1ec2a6198255c56ddfa9893d88e
-errordeveloper/kata-agent:c3ba09430-ubuntu-18.04-rootfs errordeveloper/kata-agent@sha256:3b0eaea5df36517b4285b3f6a3d93c8417d42a8b1a7c609f29af9fc23aad71ce
+errordeveloper/kata-agent:c3ba09430-ubuntu-18.04 errordeveloper/kata-agent@sha256:793bc48846f83b380f846f092f01a31fff15707effd53769163ecd9667f0df70
+errordeveloper/kata-agent:c3ba09430-ubuntu-18.04-rootfs errordeveloper/kata-agent@sha256:717d0d2614dcdef5b67405459751945dcec92fc79a3e78e64b3fb88cc9b6533b
