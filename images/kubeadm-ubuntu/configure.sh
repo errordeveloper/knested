@@ -25,6 +25,21 @@ cp /usr/share/systemd/tmp.mount /etc/systemd/system/
 
 systemctl enable tmp.mount
 
+mkdir /etc/systemd/system.conf.d
+
+#cat > /etc/systemd/system.conf.d/joincontrollers.conf << EOF
+#JoinControllers=cpu,cpuacct,cpuset,net_cls,net_prio,hugetlb,memory
+#EOF
+
+cat > /etc/systemd/system/pods.slice << EOF
+[Unit]
+DefaultDependencies=no
+Before=slices.target
+Requires=-.slice
+After=-.slice
+EOF
+
+
 cat > /etc/systemd/system/containerd.service << EOF
 [Unit]
 Description=containerd container runtime
@@ -48,6 +63,9 @@ LimitNOFILE=1048576
 # Only systemd 226 and above support this version.
 TasksMax=infinity
 OOMScoreAdjust=-999
+CPUAccounting=true
+MemoryAccounting=true
+Slice=pods.slice
 EOF
 
 systemctl enable containerd
@@ -231,25 +249,47 @@ cat > /etc/systemd/system/kubeadm@node.service.d/node.conf << EOF
 ExecStart=/usr/bin/kubeadm-join.sh
 EOF
 
+cat > /etc/systemd/system/detect-cgroup-root.service << EOF
+[Unit]
+Type=oneshot
+Before=kubelet.service
+After=pods.slice
+
+[Install]
+WantedBy=kubeadm@.target
+
+[Service]
+ExecStart=/bin/bash -c "systemctl show pods.slice -p ControlGroup > /etc/cgroup-root.env"
+EOF
+
 cat > /etc/systemd/system/kubelet.service << EOF
 [Unit]
 Description=kubelet: The Kubernetes Node Agent
 Documentation=https://kubernetes.io/docs/home/
 Before=kubeadm@master.service
 Before=kubeadm@node.service
+After=detect-cgroup-root.service
+Requires=detect-cgroup-root.service
 
 [Install]
 WantedBy=kubeadm@.target
 
 [Service]
+EnvironmentFile=/etc/cgroup-root.env
+ExecStartPre=/bin/mkdir -p /sys/fs/cgroup/cpuset/\${ControlGroup}
+ExecStartPre=/bin/mkdir -p /sys/fs/cgroup/hugetlb/\${ControlGroup}
 ExecStart=/usr/bin/kubelet \
   --config=/etc/kubernetes/kubelet.yaml \
   --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf \
-  --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock
+  --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock \
+  --cgroup-root=\${ControlGroup}
 Delegate=yes
 Restart=always
 StartLimitInterval=0
 RestartSec=5
+CPUAccounting=true
+MemoryAccounting=true
+Slice=pods.slice
 EOF
 
 cat > /etc/kubernetes/kubelet.yaml << EOF
@@ -291,6 +331,12 @@ volumeStatsAggPeriod: 0s
 # setup and parent cgroup looks a little confusing,
 # also kind uses the default cgroupfs driver
 cgroupDriver: cgroupfs
+# disable cgroups per QoS as this results in
+# kubelet poking at all process in the cgroup
+# and kills anything it sees
+# https://github.com/kubernetes/kubernetes/blob/v1.9.4/pkg/kubelet/kubelet_pods.go#L1084-L1087
+cgroupsPerQOS: false
+enforceNodeAllocatable: []
 # failSwapOn is require on D4M, this could
 # be parametrised somehow, but it doesn't
 # really change anything beyod startup logic
@@ -301,35 +347,9 @@ failSwapOn: false
 # enable currently anyway and descisions about the config
 # would need to be made, there are many options to it...
 resolvConf: /etc/resolv.conf
-kubeReserved:
-  cpu: "300m"
-  memory: "300Mi"
-  ephemeral-storage: "150Mi"
-systemReserved:
-  cpu: "300m"
-  memory: "300Mi"
-  ephemeral-storage: "150Mi"
-evictionSoftGracePeriod:
-  memory.available: "10m"
-  nodefs.available: "10m"
-  nodefs.inodesFree: "10m"
-  imagefs.available: "10m"
-  imagefs.inodesFree: "10m"
-evictionSoft:
-  memory.available: "150Mi"
-  nodefs.available: "15%"
-  nodefs.inodesFree: "10%"
-  imagefs.available: "15%"
-  imagefs.inodesFree: "10%"
-evictionHard:
-  memory.available: "50Mi"
-  nodefs.available: "5%"
-  nodefs.inodesFree: "3%"
-  imagefs.available: "5%"
-  imagefs.inodesFree: "3%"
 EOF
 
-systemctl enable kubelet
+systemctl enable kubelet detect-cgroup-root
 
 mkdir /etc/parent-management-cluster
 cat > /etc/parent-management-cluster/kubeconfig << EOF
