@@ -105,7 +105,7 @@ items:
             value: /etc/kubernetes/admin.conf
           - name: CONTAINER_RUNTIME_ENDPOINT
             value: unix:///run/containerd/containerd.sock
-          image: errordeveloper/kubeadm@sha256:b1199c4fcb4f68c468aac32ad5121b89b89a6fc24fbf979c9cdb99bbf89c34ab
+          image: errordeveloper/kubeadm@sha256:6f3e08cfcc2a85290a4f71164a228c80a4d5bc4771411bd645169f9efc2c51ec
           imagePullPolicy: Always
           name: main
           readinessProbe:
@@ -184,7 +184,7 @@ items:
     name: test-cluster-node
     namespace: default
   spec:
-    replicas: 2
+    replicas: 3
     selector:
       matchLabels:
         cluster: test-cluster
@@ -206,7 +206,7 @@ items:
             value: /etc/kubernetes/kubelet.conf
           - name: CONTAINER_RUNTIME_ENDPOINT
             value: unix:///run/containerd/containerd.sock
-          image: errordeveloper/kubeadm@sha256:b1199c4fcb4f68c468aac32ad5121b89b89a6fc24fbf979c9cdb99bbf89c34ab
+          image: errordeveloper/kubeadm@sha256:6f3e08cfcc2a85290a4f71164a228c80a4d5bc4771411bd645169f9efc2c51ec
           imagePullPolicy: Always
           name: main
           readinessProbe:
