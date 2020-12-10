@@ -83,21 +83,21 @@ RUN apt-get update \
       linux-image-4.15.0-1056-kvm \
     && true
 
-# see https://centos.pkgs.org/7/centos-updates-x86_64/ for all available versions
-FROM centos:7@sha256:4a701376d03f6b39b8c2a8f4a8e499441b0d567f9ab9d58e4991de4472fb813c as centos-7-kernels
-RUN yum install -y \
-    kernel-3.10.0-1062.18.1.el7 \
-  && true
+## see https://centos.pkgs.org/7/centos-updates-x86_64/ for all available versions
+#FROM centos:7@sha256:4a701376d03f6b39b8c2a8f4a8e499441b0d567f9ab9d58e4991de4472fb813c as centos-7-kernels
+#RUN yum install -y \
+#    kernel \
+#  && true
 
-# see https://centos.pkgs.org/8/centos-baseos-x86_64/ for all available versions
-FROM centos:8@sha256:fe8d824220415eed5477b63addf40fb06c3b049404242b31982106ac204f6700 as centos-8-kernels
-RUN dnf install -y \
-    kernel-4.18.0-147.5.1.el8_1.x86_64 \
-  && true
+## see https://centos.pkgs.org/8/centos-baseos-x86_64/ for all available versions
+#FROM centos:8@sha256:fe8d824220415eed5477b63addf40fb06c3b049404242b31982106ac204f6700 as centos-8-kernels
+#RUN dnf install -y \
+#    kernel \
+#  && true
 
 #FROM fedora:32@sha256:f0a228cac4545c031ed11da1fe5c2fd214c2c3b0b5f090c8000d9358930c7eac as fedora-32-kernels
 #  RUN dnf install -y \
-#      kernel-5.6.0-0.rc7.git0.2.fc32.x86_6 \ # go find it!
+#      kernel \
 #    && true
 
 FROM ubuntu:18.04@sha256:bec5a2727be7fff3d308193cfde3491f8fba1a2ba392b7546b43a051853a341d as image-builder
@@ -117,11 +117,11 @@ RUN mkdir -p /out/vm /out/kernel/ubuntu-bionic /out/kernel/centos-7 /out/kernel/
 COPY --from=ubuntu-bionic-kernels /lib/modules /in/lib/modules
 COPY --from=ubuntu-bionic-kernels /boot /out/kernel/ubuntu-bionic
 
-COPY --from=centos-7-kernels /lib/modules /in/lib/modules
-COPY --from=centos-7-kernels /boot /out/kernel/centos-7
+#COPY --from=centos-7-kernels /lib/modules /in/lib/modules
+#COPY --from=centos-7-kernels /boot /out/kernel/centos-7
 
-COPY --from=centos-8-kernels /lib/modules /in/lib/modules
-RUN mv /in/lib/modules/4.18.0-147.5.1.el8_1.x86_64/vmlinuz /out/kernel/centos-8/vmlinuz-4.18.0-147.5.1.el8_1.x86_64
+#COPY --from=centos-8-kernels /lib/modules /in/lib/modules
+#RUN mv /in/lib/modules/4.18.0-147.5.1.el8_1.x86_64/vmlinuz /out/kernel/centos-8/vmlinuz-4.18.0-147.5.1.el8_1.x86_64
 
 COPY --from=linuxkit/kernel:4.19.104 /kernel /out/kernel/linuxkit/vmlinuz-4.19.104-linuxkit
 COPY --from=linuxkit/kernel:4.19.104 /kernel.tar /tmp/modules.tar
