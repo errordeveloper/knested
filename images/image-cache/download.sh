@@ -33,8 +33,8 @@ if [ "${ARCH}" = "x86_64" ] ; then
   ALT_ARCH="amd64"
 fi
 
-CONTAINERD_VERSION="1.3.3"
-get_tarball "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}.linux-${ALT_ARCH}.tar.gz" /usr
+CONTAINERD_VERSION="${CONTAINERD_VERSION:-1.4.3}"
+get_tarball "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-${ALT_ARCH}.tar.gz" /usr
 
 cat > /etc/versions.env << EOF
 CONTAINERD_VERSION=${CONTAINERD_VERSION}

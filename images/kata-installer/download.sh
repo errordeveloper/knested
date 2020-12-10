@@ -35,11 +35,11 @@ fi
 
 mkdir -p /data/etc /data/usr/bin
 
-CRICTL_VERSION="1.16.0"
+CRICTL_VERSION="1.19.0"
 get_tarball "https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/crictl-v${CRICTL_VERSION}-linux-${ALT_ARCH}.tar.gz" /data/usr/bin
 
-CONTAINERD_VERSION="1.3.3"
-get_tarball "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}.linux-${ALT_ARCH}.tar.gz" /data/usr
+CONTAINERD_VERSION="${CONTAINERD_VERSION:-1.4.3}"
+get_tarball "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-${ALT_ARCH}.tar.gz" /data/usr
 
 KATA_RUNTIME_VERSION="1.11.0-alpha1"
 get_tarball "https://github.com/kata-containers/runtime/releases/download/${KATA_RUNTIME_VERSION}/kata-static-${KATA_RUNTIME_VERSION}-${ARCH}.tar.xz" /data
