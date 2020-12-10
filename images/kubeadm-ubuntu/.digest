@@ -1,5 +1,5 @@
-errordeveloper/kubeadm:ubuntu-20.04-1.16.9 errordeveloper/kubeadm@sha256:9bc48410a39919157ec769d625188d22272e98bf8b3c93d7677dda909a9fa7b7
-errordeveloper/kubeadm:ubuntu-20.04-1.17.5 errordeveloper/kubeadm@sha256:44571fa9b4a2df60f83c0706bb135f10a3da4cf46de928a9da9b20c9e798253f
-errordeveloper/kubeadm:ubuntu-20.04-1.18.12 errordeveloper/kubeadm@sha256:df1b1c14aafbf52c8ef115bad59428082938603daacb331f95ba238d89ac9803
-errordeveloper/kubeadm:ubuntu-20.04-1.19.4 errordeveloper/kubeadm@sha256:6b56e606a5820cb1d06f9813a456baf87f1120616a7674f32b458a8023ebc738
-errordeveloper/kubeadm:ubuntu-20.04-1.20.0-rc.0 errordeveloper/kubeadm@sha256:1c2be7617071cfd2acc1d83f804d35d96aa858b4d3cc3a45bc3a6ccb584b52ec
+errordeveloper/kubeadm:ubuntu-20.04-1.16.9 errordeveloper/kubeadm@sha256:f306c492b2970984072b85f3f9fca41b6b58deb1517afa64c3cd69fb8a7a8b5b
+errordeveloper/kubeadm:ubuntu-20.04-1.17.5 errordeveloper/kubeadm@sha256:7ce4d42ca6fd613db09bfe033a0edc5857107c05a7cc18541623745eeab508e4
+errordeveloper/kubeadm:ubuntu-20.04-1.18.12 errordeveloper/kubeadm@sha256:50b2f25e2f9b1cfc0de2d4b232fd9205cc97cc73f4809cdc33edc12286d9850a
+errordeveloper/kubeadm:ubuntu-20.04-1.19.4 errordeveloper/kubeadm@sha256:b1199c4fcb4f68c468aac32ad5121b89b89a6fc24fbf979c9cdb99bbf89c34ab
+errordeveloper/kubeadm:ubuntu-20.04-1.20.0-rc.0 errordeveloper/kubeadm@sha256:f0c916be645966907dc8fa200aecd9fafd958efb35882e435197d1388845da00
