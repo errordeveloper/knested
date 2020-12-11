@@ -251,7 +251,6 @@ EOF
 
 cat > /etc/systemd/system/detect-cgroup-root.service << EOF
 [Unit]
-Type=oneshot
 Before=kubelet.service
 After=pods.slice
 
@@ -259,8 +258,28 @@ After=pods.slice
 WantedBy=kubeadm@.target
 
 [Service]
+Type=oneshot
 ExecStart=/bin/bash -c "systemctl show pods.slice -p ControlGroup > /etc/cgroup-root.env"
 EOF
+
+# systemd refues sys-fs-bpf.mount, but it doesn't actually mount it in nested container setting,
+# so here is a way force-mount bpffs
+cat > /etc/systemd/system/mount-sys-fs-bpf.service << EOF
+[Unit]
+Before=kubelet.service
+Before=local-fs.target umount.target
+After=swap.target
+ConditionPathIsMountPoint=!/sys/fs/bpf
+
+[Install]
+WantedBy=kubeadm@.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '(mount | grep -q bpffs) || mount bpffs /sys/fs/bpf -t bpf -o rw,nosuid,nodev,noexec,relatime,mode=700 --make-shared'
+EOF
+
+systemctl enable mount-sys-fs-bpf.service
 
 cat > /etc/systemd/system/kubelet.service << EOF
 [Unit]

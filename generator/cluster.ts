@@ -233,15 +233,8 @@ export class KubernetesCluster {
                 break;
         }
 
-        const commonVolumes:object[] = [
-            {
-                name: "bpf-maps",
-                hostPath: {
-                    type: "Directory",
-                    path: "/sys/fs/bpf",
-                },
-            },
-        ]
+        const commonVolumes:object[] = []
+
         if  (this.cluster.withImageCache) {
              commonVolumes.push({
                  // TODO consider adding initContainers to wait for /var/images to have the right files, or at least some file
@@ -276,11 +269,6 @@ export class KubernetesCluster {
         }
 
         const commonVolumeMounts:object[] = [
-            {
-                name: "bpf-maps",
-                mountPath: "/sys/fs/bpf",
-                mountPropagation: "Bidirectional", // required due to nesting, so that cilium pod can use
-            },
             {
                 name: "metadata",
                 mountPath: "/etc/kubeadm/metadata",
@@ -321,6 +309,26 @@ export class KubernetesCluster {
                 {
                     name: "xtables-lock",
                     mountPath: "/run/xtables.lock",
+                },
+            ])
+        }
+
+        if (useKata) {
+            commonVolumes.push(...[
+                {
+                    name: "bpf-maps",
+                    hostPath: {
+                        type: "Directory",
+                        path: "/sys/fs/bpf",
+                    },
+                },
+            ])
+
+            commonVolumeMounts.push(...[
+                {
+                    name: "bpf-maps",
+                    mountPath: "/sys/fs/bpf",
+                    mountPropagation: "Bidirectional", // required due to nesting, so that cilium pod can use
                 },
             ])
         }
