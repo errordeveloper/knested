@@ -105,7 +105,7 @@ items:
             value: /etc/kubernetes/admin.conf
           - name: CONTAINER_RUNTIME_ENDPOINT
             value: unix:///run/containerd/containerd.sock
-          image: errordeveloper/kubeadm@sha256:a6f49f2f634b6f5b985ab596493246387adddb6b2e40a018de00e120d85bc395
+          image: errordeveloper/kubeadm@sha256:8f52a962999b2d286521aa7fbdcd2c34f4b42ba9d7270b5811b8d7aad1fbb750
           imagePullPolicy: Always
           name: main
           readinessProbe:
@@ -127,9 +127,6 @@ items:
             privileged: true
           tty: true
           volumeMounts:
-          - mountPath: /sys/fs/bpf
-            mountPropagation: Bidirectional
-            name: bpf-maps
           - mountPath: /etc/kubeadm/metadata
             name: metadata
           - mountPath: /lib/modules
@@ -141,10 +138,6 @@ items:
             name: parent-management-cluster-service-account-token
         serviceAccountName: test-cluster-master
         volumes:
-        - hostPath:
-            path: /sys/fs/bpf
-            type: Directory
-          name: bpf-maps
         - hostPath:
             path: /lib/modules
             type: Directory
@@ -206,7 +199,7 @@ items:
             value: /etc/kubernetes/kubelet.conf
           - name: CONTAINER_RUNTIME_ENDPOINT
             value: unix:///run/containerd/containerd.sock
-          image: errordeveloper/kubeadm@sha256:a6f49f2f634b6f5b985ab596493246387adddb6b2e40a018de00e120d85bc395
+          image: errordeveloper/kubeadm@sha256:8f52a962999b2d286521aa7fbdcd2c34f4b42ba9d7270b5811b8d7aad1fbb750
           imagePullPolicy: Always
           name: main
           readinessProbe:
@@ -228,9 +221,6 @@ items:
             privileged: true
           tty: true
           volumeMounts:
-          - mountPath: /sys/fs/bpf
-            mountPropagation: Bidirectional
-            name: bpf-maps
           - mountPath: /etc/kubeadm/metadata
             name: metadata
           - mountPath: /lib/modules
@@ -242,10 +232,6 @@ items:
             name: join-secret
         serviceAccountName: test-cluster-node
         volumes:
-        - hostPath:
-            path: /sys/fs/bpf
-            type: Directory
-          name: bpf-maps
         - hostPath:
             path: /lib/modules
             type: Directory
