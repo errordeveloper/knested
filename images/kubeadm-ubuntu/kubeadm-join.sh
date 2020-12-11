@@ -16,6 +16,7 @@ token="$(cat /etc/kubeadm/secrets/token)"
 ca_hash="$(cat /etc/kubeadm/secrets/ca_hash)"
 
 kubeadm join --v=9 \
+  --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap \
   --token="${token}"  \
   --discovery-token-ca-cert-hash="${ca_hash}"  \
   --cri-socket=/var/run/containerd/containerd.sock \
