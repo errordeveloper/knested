@@ -39,7 +39,7 @@ test-cluster.yaml:
 	  --parameter name=test-cluster \
 	  --parameter namespace=$(NAMESPACE) \
 	  --parameter with-image-cache=true \
-	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.19\.4/ { print $$2 }') \
+	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.29\.1/ { print $$2 }') \
 	> $@
 
 test-cluster-without-kata.yaml:
@@ -49,5 +49,5 @@ test-cluster-without-kata.yaml:
 	  --parameter nodes=3 \
 	  --parameter name=test-cluster \
 	  --parameter namespace=$(NAMESPACE) \
-	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.19\.4/ { print $$2 }') \
+	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.29\.1/ { print $$2 }') \
 	> $@

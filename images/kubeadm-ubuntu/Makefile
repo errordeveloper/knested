@@ -1,6 +1,6 @@
-KUBERNETES_VERSIONS := 1.16.9 1.17.5 1.18.12 1.19.4 1.20.0-rc.0
+KUBERNETES_VERSIONS := 1.25.16 1.26.13 1.27.10 1.28.6 1.29.1
 
-image = errordeveloper/kubeadm:ubuntu-22.04-$(1)
+image = ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-$(1)
 
 define do-build
   docker image build \
