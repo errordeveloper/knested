@@ -41,6 +41,9 @@ ALT_ARCH="${ARCH}"
 if [ "${ARCH}" = "x86_64" ] ; then
   ALT_ARCH="amd64"
 fi
+if [ "${ARCH}" = "aarch64" ] ; then
+  ALT_ARCH="arm64"
+fi
 
 test -n "${KUBERNETES_VERSION}" || exit 1
 
@@ -48,16 +51,16 @@ test -n "${KUBERNETES_VERSION}" || exit 1
 # and cater for that use-cases, for now one is meant to to fork this image if they really
 # need to customise it a lot
 
-CNI_VERSION="0.8.7"
+CNI_VERSION="1.4.0"
 get_tarball "https://github.com/containernetworking/plugins/releases/download/v${CNI_VERSION}/cni-plugins-linux-${ALT_ARCH}-v${CNI_VERSION}.tgz" /opt/cni/bin
 
-CRICTL_VERSION="1.19.0"
+CRICTL_VERSION="1.29.0"
 get_tarball "https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/crictl-v${CRICTL_VERSION}-linux-${ALT_ARCH}.tar.gz" /usr/bin
 
-CONTAINERD_VERSION="${CONTAINERD_VERSION:-1.4.3}"
+CONTAINERD_VERSION="${CONTAINERD_VERSION:-1.7.12}"
 get_tarball "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-${ALT_ARCH}.tar.gz" /usr
 
-RUNC_VERSION="${RUNC_VERSION:-1.0.0-rc92}"
+RUNC_VERSION="${RUNC_VERSION:-1.1.11}"
 get_binary "https://github.com/opencontainers/runc/releases/download/v${RUNC_VERSION}/runc.${ALT_ARCH}" runc
 
 for b in kubeadm kubectl kubelet ; do
