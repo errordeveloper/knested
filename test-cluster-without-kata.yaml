@@ -105,7 +105,7 @@ items:
             value: /etc/kubernetes/admin.conf
           - name: CONTAINER_RUNTIME_ENDPOINT
             value: unix:///run/containerd/containerd.sock
-          image: ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:6d5fc3e16f1f52f6718bca434f2ae6c82e0811a8148db65438eca284682415b5
+          image: ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:370eb77071e89d8c4bfbfc902c7b4cda570cd649d1f38a0b51caa79e0154e8a5
           imagePullPolicy: Always
           name: main
           readinessProbe:
@@ -199,7 +199,7 @@ items:
             value: /etc/kubernetes/kubelet.conf
           - name: CONTAINER_RUNTIME_ENDPOINT
             value: unix:///run/containerd/containerd.sock
-          image: ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:6d5fc3e16f1f52f6718bca434f2ae6c82e0811a8148db65438eca284682415b5
+          image: ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:370eb77071e89d8c4bfbfc902c7b4cda570cd649d1f38a0b51caa79e0154e8a5
           imagePullPolicy: Always
           name: main
           readinessProbe:

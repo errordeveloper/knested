@@ -1,5 +1,5 @@
-ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.25.16 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:61652e8b89680becc6eaece6180ca29f414dd661af9be4971b781aa2321ff6cb
-ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.26.13 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:18059b3b761bb27bab99f90c053bbc874e15dddb8a1e65497115da275d247cac
-ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.27.10 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:0855ad757c883b19bc3c67f3a31195876fcca373d034b9e052f03d5430c37520
-ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.28.6 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:58963f38d3bce9267b40641bd58253861bfde79cefdd5f57774c6b338a5c1571
-ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.29.1 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:6d5fc3e16f1f52f6718bca434f2ae6c82e0811a8148db65438eca284682415b5
+ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.25.16 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:3375a396c7d9611db5f692a06c46b34e7f6ca4e43db1156062baab6c33fc859f
+ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.26.13 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:b03aee8acaea305c718f990a0b53b964dcdc2a4405c6bc6d911bd6ba03c6b925
+ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.27.10 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:e7b10177dbdf89bcee8fba213e0f67e77e544b34f5b29ca913b1266d387c7a00
+ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.28.6 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:d0a8c4ac59af15a7f62ded61683356480e63cfd1b942df3de53f3754a6bf88cf
+ghcr.io/errordeveloper/kube-test-env/kubeadm:ubuntu-22.04-1.29.1 ghcr.io/errordeveloper/kube-test-env/kubeadm@sha256:370eb77071e89d8c4bfbfc902c7b4cda570cd649d1f38a0b51caa79e0154e8a5

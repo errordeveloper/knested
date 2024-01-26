@@ -35,6 +35,7 @@ Requires=-.slice
 After=-.slice
 EOF
 
+systemctl enable pods.slice
 
 cat > /etc/systemd/system/containerd.service << EOF
 [Unit]
@@ -278,6 +279,10 @@ systemctl enable mount-sys-fs-bpf.service
 
 cat > /etc/systemd/system/run-cilium-cgroupv2.mount << EOF
 [Unit]
+Before=kubelet.service
+
+[Install]
+WantedBy=kubeadm@.target
 
 [Mount]
 Where=/run/cilium/cgroupv2
@@ -286,6 +291,8 @@ Options=rw,relatime,shared
 SloppyOptions=true
 Type=cgroup2
 EOF
+
+systemctl enable run-cilium-cgroupv2.mount
 
 cat > /etc/systemd/system/kubelet.service << EOF
 [Unit]
