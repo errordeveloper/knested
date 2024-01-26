@@ -27,10 +27,6 @@ systemctl enable tmp.mount
 
 mkdir /etc/systemd/system.conf.d
 
-#cat > /etc/systemd/system.conf.d/joincontrollers.conf << EOF
-#JoinControllers=cpu,cpuacct,cpuset,net_cls,net_prio,hugetlb,memory
-#EOF
-
 cat > /etc/systemd/system/pods.slice << EOF
 [Unit]
 DefaultDependencies=no
@@ -267,7 +263,6 @@ EOF
 cat > /etc/systemd/system/mount-sys-fs-bpf.service << EOF
 [Unit]
 Before=kubelet.service
-Before=local-fs.target umount.target
 After=swap.target
 ConditionPathIsMountPoint=!/sys/fs/bpf
 
@@ -280,6 +275,17 @@ ExecStart=/bin/bash -c '(mount | grep -q bpffs) || mount bpffs /sys/fs/bpf -t bp
 EOF
 
 systemctl enable mount-sys-fs-bpf.service
+
+cat > /etc/systemd/system/run-cilium-cgroupv2.mount << EOF
+[Unit]
+
+[Mount]
+Where=/run/cilium/cgroupv2
+What=none
+Options=rw,relatime,shared
+SloppyOptions=true
+Type=cgroup2
+EOF
 
 cat > /etc/systemd/system/kubelet.service << EOF
 [Unit]
@@ -295,13 +301,10 @@ WantedBy=kubeadm@.target
 
 [Service]
 EnvironmentFile=/etc/cgroup-root.env
-ExecStartPre=/bin/mkdir -p /sys/fs/cgroup/cpuset/\${ControlGroup}
-ExecStartPre=/bin/mkdir -p /sys/fs/cgroup/hugetlb/\${ControlGroup}
 ExecStart=/usr/bin/kubelet \
   --config=/etc/kubernetes/kubelet.yaml \
   --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf \
-  --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock \
-  --cgroup-root=\${ControlGroup}
+  --runtime-cgroups=\${ControlGroup}/pods
 Delegate=yes
 Restart=always
 StartLimitInterval=0
@@ -340,6 +343,7 @@ imageMinimumGCAge: 0s
 nodeStatusReportFrequency: 0s
 nodeStatusUpdateFrequency: 0s
 rotateCertificates: true
+containerRuntimeEndpoint: unix:///run/containerd/containerd.sock
 runtimeRequestTimeout: 0s
 staticPodPath: /etc/kubernetes/manifests
 streamingConnectionIdleTimeout: 0s
