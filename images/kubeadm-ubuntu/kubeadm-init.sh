@@ -22,11 +22,33 @@ patch_secret() {
 # on EKS without Kata SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables are required
 # on D4M Swap is Requires
 
+
+cat > /etc/kubernetes/kubeadm-init.yaml << EOF
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: unix:///var/run/containerd/containerd.sock
+  imagePullPolicy: IfNotPresent
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: "${KUBERNETES_VERSION}"
+clusterName: "${cluster}"
+apiServer:
+  certSANs: ["${cluster}"]
+networking:
+  serviceSubnet: "10.97.0.0/16"
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+conntrack:
+  maxPerCore: 0
+EOF
+
 kubeadm init --v=9 \
-  --kubernetes-version="${KUBERNETES_VERSION}" \
-  --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap \
-  --apiserver-cert-extra-sans="${cluster}" \
-  --cri-socket=/var/run/containerd/containerd.sock
+  --config=/etc/kubernetes/kubeadm-init.yaml \
+  --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap
 
 # install cilium manifest
 kubectl apply --filename=/etc/cilium.yaml --kubeconfig=/etc/kubernetes/admin.conf
