@@ -12,7 +12,7 @@ get_tarball() {
 
   mkdir -p "${dir}"
 
-  curl --fail --location --silent --output "${tmp}" "${url}"
+  curl --fail --show-error --location --silent --output "${tmp}" "${url}"
   tar -C "${dir}" -xf "${tmp}"
 
   rm -f "${tmp}"
@@ -24,7 +24,7 @@ get_file() {
 
   mkdir -p "$(dirname "${output}")"
 
-  curl --fail --location --silent --output "${output}" "${url}"
+  curl --fail --show-error --location --silent --output "${output}" "${url}"
 }
 
 get_binary() {
