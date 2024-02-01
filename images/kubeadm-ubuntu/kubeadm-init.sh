@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-cluster="$(sed -n 's/^cluster="\(.*\)"$/\1/p' "/etc/kubeadm/metadata/labels")"
+cluster="$(sed -n 's|^knested.dev/cluster="\(.*\)"$|\1|p' "/etc/kubeadm/metadata/labels")"
 namespace="$(cat "/etc/kubeadm/metadata/namespace")"
 
 patch_secret() {

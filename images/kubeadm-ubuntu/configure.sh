@@ -232,10 +232,10 @@ Type=oneshot
 EnvironmentFile=/etc/versions.env
 EOF
 
-systemctl enable kubeadm@master.service kubeadm@node.service
+systemctl enable kubeadm@cp.service kubeadm@node.service
 
-mkdir  /etc/systemd/system/kubeadm@master.service.d
-cat > /etc/systemd/system/kubeadm@master.service.d/master.conf << EOF
+mkdir  /etc/systemd/system/kubeadm@cp.service.d
+cat > /etc/systemd/system/kubeadm@cp.service.d/cp.conf << EOF
 [Service]
 ExecStart=/usr/bin/kubeadm-init.sh
 EOF
@@ -298,7 +298,7 @@ cat > /etc/systemd/system/kubelet.service << EOF
 [Unit]
 Description=kubelet: The Kubernetes Node Agent
 Documentation=https://kubernetes.io/docs/home/
-Before=kubeadm@master.service
+Before=kubeadm@cp.service
 Before=kubeadm@node.service
 After=detect-cgroup-root.service
 Requires=detect-cgroup-root.service

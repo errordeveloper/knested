@@ -10,13 +10,13 @@ if ! [ -d /images ] ; then
   exit 0
 fi
 
-role="$(sed -n 's/^role="\(.*\)"$/\1/p' "/etc/kubeadm/metadata/labels")"
+role="$(sed -n 's|^knested.dev/role="\(.*\)"$|\1|p' "/etc/kubeadm/metadata/labels")"
 
 dirs=(
   "/images/container/common"
   "/images/container/common_${KUBERNETES_VERSION}"
 )
-if [ "${role}" = "master" ] ; then
+if [ "${role}" = "cp" ] ; then
   dirs+=("/images/container/control_plane_${KUBERNETES_VERSION}")
 fi
 

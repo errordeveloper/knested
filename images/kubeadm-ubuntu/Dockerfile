@@ -68,7 +68,7 @@ RUN /tmp/configure.sh
 
 COPY preload-images.sh /usr/bin/preload-images.sh
 COPY kubeadm-init.sh /usr/bin/kubeadm-init.sh
-COPY is-master-ready.sh /usr/bin/is-master-ready.sh
+COPY is-cp-ready.sh /usr/bin/is-cp-ready.sh
 
 COPY kubeadm-join.sh /usr/bin/kubeadm-join.sh
 COPY is-node-ready.sh /usr/bin/is-node-ready.sh

@@ -6,8 +6,8 @@ set -o nounset
 
 export KUBECONFIG="/etc/kubernetes/admin.conf"
 
-if ! systemctl --no-pager is-active kubeadm@master.target > /dev/null ; then
-  echo "systemd kubeadm@master.target is not yet active"
+if ! systemctl --no-pager is-active kubeadm@cp.target > /dev/null ; then
+  echo "systemd kubeadm@cp.target is not yet active"
   exit 1
 fi
 
@@ -26,8 +26,8 @@ if ! [ "${ready}" = "True" ] ; then
   exit 1
 fi
 
-if systemctl --no-pager is-failed kubeadm@master.service > /dev/null ; then
-  echo "systemd kubeadm@master.service has failed"
+if systemctl --no-pager is-failed kubeadm@cp.service > /dev/null ; then
+  echo "systemd kubeadm@cp.service has failed"
   exit 1
 fi
 
