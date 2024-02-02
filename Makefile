@@ -32,22 +32,6 @@ show-digests:
 NAMESPACE ?= default
 
 test-cluster.yaml:
-	cd generator && npx tsc
-	jk generate generator/main.js --stdout \
-	  --parameter kata=true \
-	  --parameter nodes=10 \
-	  --parameter name=test-cluster \
-	  --parameter namespace=$(NAMESPACE) \
-	  --parameter with-image-cache=true \
-	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.29\.1/ { print $$2 }') \
-	> $@
-
-test-cluster-without-kata.yaml:
-	cd generator && npx tsc
-	jk generate generator/main.js --stdout \
-	  --parameter kata=false \
-	  --parameter nodes=3 \
-	  --parameter name=test-cluster \
-	  --parameter namespace=$(NAMESPACE) \
-	  --parameter image=$(shell cat images/kubeadm-ubuntu/.digest | awk '/1\.29\.1/ { print $$2 }') \
+	timoni build test-cluster . \
+	  --namespace=$(NAMESPACE) \
 	> $@

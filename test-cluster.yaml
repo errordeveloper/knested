@@ -1,270 +1,371 @@
 apiVersion: v1
-items:
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: master
-    name: test-cluster
-    namespace: default
-  spec:
-    ports:
-    - port: 6443
-      protocol: TCP
-      targetPort: 6443
-    selector:
-      cluster: test-cluster
-      role: master
-    sessionAffinity: None
-    type: ClusterIP
-- apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: master
-    name: test-cluster-master
-    namespace: default
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    labels:
-      cluster: test-cluster
-    name: test-cluster-kubeconfig
-    namespace: default
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    labels:
-      cluster: test-cluster
-    name: test-cluster-join-token
-    namespace: default
-- apiVersion: rbac.authorization.k8s.io/v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+  name: test-cluster
+  namespace: default
+spec:
+  ports:
+  - name: api
+    port: 6443
+    targetPort: 6443
+  selector:
+    app.kubernetes.io/name: test-cluster-cp
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-join-token
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+  name: test-cluster-join-token
+  namespace: default
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-kubeconfig
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+  name: test-cluster-kubeconfig
+  namespace: default
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-cp
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: cp
+  name: test-cluster-cp
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-cp
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: cp
+  name: test-cluster-cp
+  namespace: default
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - test-cluster-kubeconfig
+  - test-cluster-join-token
+  resources:
+  - secrets
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-cp
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: cp
+  name: test-cluster-cp
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
   kind: Role
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: master
-    name: test-cluster-master
-    namespace: default
-  rules:
-  - apiGroups:
-    - ""
-    resourceNames:
-    - test-cluster-kubeconfig
-    - test-cluster-join-token
-    resources:
-    - secrets
-    verbs:
-    - get
-    - patch
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: master
-    name: test-cluster-master
-    namespace: default
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: Role
-    name: test-cluster-master
-  subjects:
-  - kind: ServiceAccount
-    name: test-cluster-master
-- apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: master
-    name: test-cluster-master
-    namespace: default
-  spec:
-    replicas: 1
-    selector:
-      matchLabels:
-        cluster: test-cluster
-        role: master
-    template:
-      metadata:
-        annotations:
-          io.katacontainers.config.hypervisor.default_memory: "5120"
-          io.katacontainers.config.hypervisor.default_vcpus: "2"
-          io.katacontainers.config.hypervisor.image: /var/lib/images/vm/kata-agent-ubuntu.img
-          io.katacontainers.config.hypervisor.kernel: /var/lib/images/kernel/linuxkit/vmlinuz-5.4.19-linuxkit
-          io.katacontainers.config_path: /opt/kata/share/defaults/kata-containers/configuration-qemu-debug.toml
-        labels:
-          cluster: test-cluster
-          role: master
-      spec:
-        automountServiceAccountToken: false
-        containers:
-        - command:
-          - /lib/systemd/systemd
-          - --unit=kubeadm@master.target
-          env:
-          - name: KUBECONFIG
-            value: /etc/kubernetes/admin.conf
-          - name: CONTAINER_RUNTIME_ENDPOINT
-            value: unix:///run/containerd/containerd.sock
-          image: errordeveloper/kubeadm@sha256:8f52a962999b2d286521aa7fbdcd2c34f4b42ba9d7270b5811b8d7aad1fbb750
-          imagePullPolicy: Always
-          name: main
-          readinessProbe:
-            exec:
-              command:
-              - /usr/bin/is-master-ready.sh
-            failureThreshold: 500
-            initialDelaySeconds: 30
-            periodSeconds: 2
-            successThreshold: 5
-          resources:
-            limits:
-              cpu: 2000m
-              memory: 5120Mi
-            requests:
-              cpu: 2000m
-              memory: 5120Mi
-          securityContext:
-            privileged: true
-          tty: true
-          volumeMounts:
-          - mountPath: /etc/kubeadm/metadata
-            name: metadata
-          - mountPath: /images
-            name: images
-          - mountPath: /sys/fs/bpf
-            mountPropagation: Bidirectional
-            name: bpf-maps
-          - mountPath: /etc/parent-management-cluster/secrets
-            name: parent-management-cluster-service-account-token
-        runtimeClassName: kata-qemu
-        serviceAccountName: test-cluster-master
-        volumes:
-        - hostPath:
-            path: /var/lib/images
-            type: Directory
-          name: images
-        - hostPath:
-            path: /sys/fs/bpf
-            type: Directory
-          name: bpf-maps
-        - downwardAPI:
-            items:
-            - fieldRef:
-                fieldPath: metadata.labels
-              path: labels
-            - fieldRef:
-                fieldPath: metadata.namespace
-              path: namespace
+  name: test-cluster-cp
+subjects:
+- kind: ServiceAccount
+  name: test-cluster-cp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-cp
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: cp
+  name: test-cluster-cp
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test-cluster-cp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: test-cluster-cp
+        knested.dev/cluster: test-cluster
+        knested.dev/role: cp
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - command:
+        - /lib/systemd/systemd
+        - --unit=kubeadm@cp.target
+        env:
+        - name: KUBECONFIG
+          value: /etc/kubernetes/admin.conf
+        - name: CONTAINER_RUNTIME_ENDPOINT
+          value: unix:///run/containerd/containerd.sock
+        image: ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-1.29.1@sha256:3cf5485ca939612af2a7603711fc114a42cfcdb8a163d5d266576d3370a65cb1
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 6443
+          name: api
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/is-cp-ready.sh
+          failureThreshold: 500
+          initialDelaySeconds: 30
+          periodSeconds: 2
+          successThreshold: 5
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 5200Mi
+          requests:
+            cpu: 2000m
+            memory: 5200Mi
+        securityContext:
+          privileged: true
+        tty: true
+        volumeMounts:
+        - mountPath: /etc/kubeadm/metadata
           name: metadata
-        - name: parent-management-cluster-service-account-token
-          projected:
-            sources:
-            - serviceAccountToken:
-                path: token
-- apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: node
-    name: test-cluster-node
-    namespace: default
-- apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    labels:
-      cluster: test-cluster
-      role: node
-    name: test-cluster-node
-    namespace: default
-  spec:
-    replicas: 10
-    selector:
-      matchLabels:
-        cluster: test-cluster
-        role: node
-    template:
-      metadata:
-        annotations:
-          io.katacontainers.config.hypervisor.default_memory: "8192"
-          io.katacontainers.config.hypervisor.default_vcpus: "2"
-          io.katacontainers.config.hypervisor.image: /var/lib/images/vm/kata-agent-ubuntu.img
-          io.katacontainers.config.hypervisor.kernel: /var/lib/images/kernel/linuxkit/vmlinuz-5.4.19-linuxkit
-          io.katacontainers.config_path: /opt/kata/share/defaults/kata-containers/configuration-qemu-debug.toml
-        labels:
-          cluster: test-cluster
-          role: node
-      spec:
-        automountServiceAccountToken: false
-        containers:
-        - command:
-          - /lib/systemd/systemd
-          - --unit=kubeadm@node.target
-          env:
-          - name: KUBECONFIG
-            value: /etc/kubernetes/kubelet.conf
-          - name: CONTAINER_RUNTIME_ENDPOINT
-            value: unix:///run/containerd/containerd.sock
-          image: errordeveloper/kubeadm@sha256:8f52a962999b2d286521aa7fbdcd2c34f4b42ba9d7270b5811b8d7aad1fbb750
-          imagePullPolicy: Always
-          name: main
-          readinessProbe:
-            exec:
-              command:
-              - /usr/bin/is-node-ready.sh
-            failureThreshold: 500
-            initialDelaySeconds: 30
-            periodSeconds: 2
-            successThreshold: 5
-          resources:
-            limits:
-              cpu: 2000m
-              memory: 8192Mi
-            requests:
-              cpu: 2000m
-              memory: 8192Mi
-          securityContext:
-            privileged: true
-          tty: true
-          volumeMounts:
-          - mountPath: /etc/kubeadm/metadata
-            name: metadata
-          - mountPath: /images
-            name: images
-          - mountPath: /sys/fs/bpf
-            mountPropagation: Bidirectional
-            name: bpf-maps
-          - mountPath: /etc/kubeadm/secrets
-            name: join-secret
-        runtimeClassName: kata-qemu
-        serviceAccountName: test-cluster-node
-        volumes:
-        - hostPath:
-            path: /var/lib/images
-            type: Directory
-          name: images
-        - hostPath:
-            path: /sys/fs/bpf
-            type: Directory
-          name: bpf-maps
-        - downwardAPI:
-            items:
-            - fieldRef:
-                fieldPath: metadata.labels
-              path: labels
-            - fieldRef:
-                fieldPath: metadata.namespace
-              path: namespace
+          readOnly: true
+        - mountPath: /lib/modules
+          name: lib-modules
+          readOnly: true
+        - mountPath: /run/xtables.lock
+          name: xtables-lock
+          readOnly: false
+        - mountPath: /etc/parent-management-cluster/secrets
+          name: parent-management-cluster-service-account-token
+      serviceAccountName: test-cluster-cp
+      volumes:
+      - downwardAPI:
+          items:
+          - fieldRef:
+              fieldPath: metadata.labels
+            path: labels
+          - fieldRef:
+              fieldPath: metadata.namespace
+            path: namespace
+        name: metadata
+      - hostPath:
+          path: /lib/modules
+          type: Directory
+        name: lib-modules
+      - hostPath:
+          path: /run/xtables.lock
+          type: FileOrCreate
+        name: xtables-lock
+      - name: parent-management-cluster-service-account-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: token
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-node
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: node
+  name: test-cluster-node
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-node
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: node
+  name: test-cluster-node
+  namespace: default
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-node
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: node
+  name: test-cluster-node
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: test-cluster-node
+subjects:
+- kind: ServiceAccount
+  name: test-cluster-node
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-node
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: node
+  name: test-cluster-node
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test-cluster-node
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: test-cluster-node
+        knested.dev/cluster: test-cluster
+        knested.dev/role: node
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - command:
+        - /lib/systemd/systemd
+        - --unit=kubeadm@node.target
+        env:
+        - name: KUBECONFIG
+          value: /etc/kubernetes/kubelet.conf
+        - name: CONTAINER_RUNTIME_ENDPOINT
+          value: unix:///run/containerd/containerd.sock
+        image: ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-1.29.1@sha256:3cf5485ca939612af2a7603711fc114a42cfcdb8a163d5d266576d3370a65cb1
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 6443
+          name: api
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/is-node-ready.sh
+          failureThreshold: 500
+          initialDelaySeconds: 30
+          periodSeconds: 2
+          successThreshold: 5
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 8200Mi
+          requests:
+            cpu: 2000m
+            memory: 8200Mi
+        securityContext:
+          privileged: true
+        tty: true
+        volumeMounts:
+        - mountPath: /etc/kubeadm/metadata
           name: metadata
-        - name: join-secret
-          projected:
-            sources:
-            - secret:
-                name: test-cluster-join-token
-                optional: false
-kind: List
+          readOnly: true
+        - mountPath: /lib/modules
+          name: lib-modules
+          readOnly: true
+        - mountPath: /run/xtables.lock
+          name: xtables-lock
+          readOnly: false
+        - mountPath: /etc/kubeadm/secrets
+          name: join-secret
+      serviceAccountName: test-cluster-node
+      volumes:
+      - downwardAPI:
+          items:
+          - fieldRef:
+              fieldPath: metadata.labels
+            path: labels
+          - fieldRef:
+              fieldPath: metadata.namespace
+            path: namespace
+        name: metadata
+      - hostPath:
+          path: /lib/modules
+          type: Directory
+        name: lib-modules
+      - hostPath:
+          path: /run/xtables.lock
+          type: FileOrCreate
+        name: xtables-lock
+      - name: join-secret
+        projected:
+          sources:
+          - secret:
+              name: test-cluster-join-token
+              optional: false
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    action.timoni.sh/force: enabled
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-sonobuoy
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+  name: test-cluster-sonobuoy
+  namespace: default
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      annotations:
+        timoni.sh/checksum: d6c82b5e-2adb-5a89-a06b-18734d97f052
+    spec:
+      containers:
+      - command:
+        - /sonobuoy
+        - run
+        - --kubeconfig=/etc/kubeadm/secrets/kubeconfig
+        - --wait=1440
+        image: docker.io/sonobuoy/sonobuoy:v0.57.1@sha256:6d80fd42ee1f4a8c5bd0a744af2663c2f1b64b820aaaf3622be6ba91564087d4
+        imagePullPolicy: IfNotPresent
+        name: sonobuoy
+        volumeMounts:
+        - mountPath: /etc/kubeadm/secrets
+          name: kubeconfig
+      restartPolicy: Never
+      volumes:
+      - name: kubeconfig
+        projected:
+          sources:
+          - secret:
+              name: test-cluster-kubeconfig
+              optional: false
+---
