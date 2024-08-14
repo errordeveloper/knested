@@ -54,9 +54,6 @@ STOPSIGNAL SIGRTMIN+3
 
 RUN mkdir -p /boot
 
-# TODO: modules should be actually mounted from the host
-COPY --from=errordeveloper/kata-agent:816ee8f1f-ubuntu-18.04-rootfs /lib/modules /lib/modules
-
 ARG KUBERNETES_VERSION
 
 COPY download.sh /tmp/download.sh
