@@ -8,8 +8,8 @@ package main
 values: {
 	images: coreNode: {
 		repository: "ghcr.io/errordeveloper/knested/kubeadm"
-		digest:     "sha256:3cf5485ca939612af2a7603711fc114a42cfcdb8a163d5d266576d3370a65cb1"
-		tag:        "ubuntu-22.04-1.29.1"
+		digest:     "sha256:5e1dab22fa9c162f9b92e5a8ec41e9ff3c320b0d86e347c95e628a6f87f5b9b6"
+		tag:        "ubuntu-22.04-1.30.3"
 	}
 	conformanceTest: {
 		enabled: true
