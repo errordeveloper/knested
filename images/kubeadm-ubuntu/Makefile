@@ -1,17 +1,17 @@
-KUBERNETES_VERSIONS := 1.25.16 1.26.13 1.27.10 1.28.6 1.29.1
+KUBERNETES_VERSIONS := 1.26.15 1.27.16 1.28.12 1.29.7 1.30.3 1.31.0
 
 image = ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-$(1)
 
 define do-build
-  docker image build \
+  nerdctl image build --platform linux/arm64,linux/amd64 \
 	  --build-arg KUBERNETES_VERSION=$(1) \
 	  --tag $(call image,$(1)) .
 
 endef
 
 define do-push
-  docker image push $(call image,$(1))
-  docker image inspect --format '{{(index .RepoTags 0)}} {{(index .RepoDigests 0)}}' $(call image,$(1)) > .digest_$(1)
+  nerdctl image push $(call image,$(1))
+  nerdctl image inspect --format '{{(index .RepoTags 0)}} {{(index .RepoDigests 0)}}' $(call image,$(1)) > .digest_$(1)
 
 endef
 
