@@ -1,6 +1,6 @@
 KUBERNETES_VERSIONS := 1.26.15 1.27.16 1.28.12 1.29.7 1.30.3 1.31.0
 
-image = ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-$(1)
+image = ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-$(1)
 
 define do-build
   nerdctl image build --platform linux/arm64,linux/amd64 \

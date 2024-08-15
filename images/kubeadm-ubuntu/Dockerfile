@@ -1,4 +1,4 @@
-FROM ubuntu:22.04@sha256:e6173d4dc55e76b87c4af8db8821b1feae4146dd47341e4d431118c7dd060a74
+FROM ubuntu:24.04@sha256:2e863c44b718727c860746568e1d54afd13b2fa71b160f5cd9058fc436217b30
 
 # Based on https://github.com/weaveworks/footloose/blob/e0a534425d93b0dc45e308b319b14622f60f39da/images/ubuntu18.04/Dockerfile
 
@@ -44,9 +44,6 @@ RUN systemctl mask \
       sys-fs-fuse-connections.mount \
       systemd-tmpfiles-setup.service \
       systemd-update-utmp.service \
-    && true
-RUN systemctl disable \
-      networkd-dispatcher.service \
     && true
 
 # https://www.freedesktop.org/wiki/Software/systemd/ContainerInterface/
