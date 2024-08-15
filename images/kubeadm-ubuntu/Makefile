@@ -10,7 +10,7 @@ define do-build
 endef
 
 define do-push
-  nerdctl image push $(call image,$(1))
+  nerdctl image push --platform linux/arm64,linux/amd64 $(call image,$(1))
   nerdctl image inspect --format '{{(index .RepoTags 0)}} {{(index .RepoDigests 0)}}' $(call image,$(1)) > .digest_$(1)
 
 endef
