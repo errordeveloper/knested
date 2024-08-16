@@ -1,6 +1,6 @@
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.26.15 ghcr.io/errordeveloper/knested/kubeadm@sha256:c219793e78a998c969cc3adbfdcc9399dcc616810ac0fd4e82f350f624f30576
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.27.16 ghcr.io/errordeveloper/knested/kubeadm@sha256:eb2e70d08578fc1911a5d2a87c8e3f64cd57ba33d021e7b885c26a57a43b97cb
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.28.12 ghcr.io/errordeveloper/knested/kubeadm@sha256:fd8ee1a79e0eb9b63bb13928662fe4913eeaedbc4f52c43575909b0aaf4465fb
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.29.7 ghcr.io/errordeveloper/knested/kubeadm@sha256:8956b20a97f2f754471f5b456f02c47bcc2d013e3dd5e647ac898fc82e94bc74
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.30.3 ghcr.io/errordeveloper/knested/kubeadm@sha256:5e1dab22fa9c162f9b92e5a8ec41e9ff3c320b0d86e347c95e628a6f87f5b9b6
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.31.0 ghcr.io/errordeveloper/knested/kubeadm@sha256:cc03debc5ff1997de928663004d0bd0c4dbd3dd1a4a7c17681ade1c6f61d2ac6
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.26.15 ghcr.io/errordeveloper/knested/kubeadm@sha256:9d27c8c847743b68c01faaed8367f0aec82c8e4d1661706d39c7d187c776cebd
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.27.16 ghcr.io/errordeveloper/knested/kubeadm@sha256:18a1abd1c270ff22b8eddfb4fbfc94330fe25e3a732112253f2feea05b2e410a
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.28.12 ghcr.io/errordeveloper/knested/kubeadm@sha256:27919d4e0b8ed6dd3e2a4be8e916d02dfaed215d439545d3ca35e0975d1ed91c
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.29.7 ghcr.io/errordeveloper/knested/kubeadm@sha256:7783cf64731da02735e8354148dd29f4e81260fa2ffb03e46d90617954755cfa
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.30.3 ghcr.io/errordeveloper/knested/kubeadm@sha256:465e48cd143b75e57f87acf4b9399fcde63aab4912dc17cfd26c895bd005d62c
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.31.0 ghcr.io/errordeveloper/knested/kubeadm@sha256:598f793521a08f7986d38cf454882a2e0da5f4b8be7b552211e8d0a077ba2227
