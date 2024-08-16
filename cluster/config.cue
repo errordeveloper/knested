@@ -37,6 +37,10 @@ import (
 	secretAnnotations?:  timoniv1.#Annotations
 	serviceAnnotations?: timoniv1.#Annotations
 
+	service: {
+		type: *"ClusterIP" | string
+	}
+
 	node: {
 		replicas: *1 | int & >0
 

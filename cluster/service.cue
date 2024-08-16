@@ -23,7 +23,7 @@ import (
 	}
 
 	spec: {
-		type:            "ClusterIP"
+		type:            #config.service.type
 		sessionAffinity: "None"
 		ports: [
 			{
