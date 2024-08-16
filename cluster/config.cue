@@ -102,6 +102,9 @@ import (
 				#name:   secretName
 			}
 		}
+		"PersistentVolumeClaim/cp": #PersistentVolumeClaim & {
+			#config: config
+		}
 		for role, _ in _constants.componentRoles {
 			"ServiceAccount/\(role)": #ServiceAccount & {
 				#config: config

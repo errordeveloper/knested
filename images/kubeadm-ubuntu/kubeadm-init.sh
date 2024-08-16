@@ -7,12 +7,26 @@ set -o nounset
 cluster="$(sed -n 's|^knested.dev/cluster="\(.*\)"$|\1|p' "/etc/kubeadm/metadata/labels")"
 namespace="$(cat "/etc/kubeadm/metadata/namespace")"
 
+get_secret() {
+  kubectl get secret \
+    --kubeconfig="/etc/parent-management-cluster/kubeconfig" \
+    --namespace="${namespace}" \
+      "$@"
+}
+
 patch_secret() {
   kubectl patch secret \
     --kubeconfig="/etc/parent-management-cluster/kubeconfig" \
     --namespace="${namespace}" \
       "$@"
 }
+
+if [ -e /etc/kubernetes/kubeadm-init.yaml ] \
+  && [ -n "$(get_secret "${cluster}-join-token" --output="jsonpath={.data.ca_hash}")" ] \
+  && [ -n "$(get_secret "${cluster}-kubeconfig" --output="jsonpath={.data.kubeconfig}")" ] ; then
+      echo "cluster already configured"
+      exit 0
+fi
 
 # it looks CPU detection doesn't work very well, and with 3 cores it still barks;
 # --cri-socket is required also, as somehow autodetection is broken when

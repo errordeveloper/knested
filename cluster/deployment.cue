@@ -24,7 +24,7 @@ import (
 				labels: roleConfig.selector.labels
 				labels: {
 					(#ClusterLabel): #config.clusterName
-					(#RoleLabel): roleAlias
+					(#RoleLabel):    roleAlias
 				}
 				if roleConfig.podAnnotations != _|_ {
 					annotations: roleConfig.podAnnotations
@@ -139,6 +139,10 @@ _readinessProbes: {
 				serviceAccountToken: path: "token"
 			}]
 		},
+		{
+			name: "cp-data"
+			persistentVolumeClaim: claimName: "\(#clusterName)-cp"
+		},
 	]
 	node: [
 		_metadataVolume,
@@ -169,6 +173,17 @@ _roleVolumeMounts: {
 			name:      "parent-management-cluster-service-account-token"
 			mountPath: "/etc/parent-management-cluster/secrets"
 		},
+		{
+			name:      "cp-data"
+			mountPath: "/etc/kubernetes/pki"
+			subPath:   "etc-kubernetes-pki"
+		},
+		{
+			name:      "cp-data"
+			mountPath: "/var/lib/etcd"
+			subPath:   "var-lib-etcd"
+		},
+
 	]
 	node: [
 		_metadataVolumeMount,
@@ -235,3 +250,18 @@ _hostPathVolumeMounts: [
 		readOnly:  false
 	},
 ]
+
+#PersistentVolumeClaim: corev1.#PersistentVolumeClaim & {
+	#config: #Config
+
+	apiVersion: "v1"
+	kind:       "PersistentVolumeClaim"
+	metadata:   #config.controlPlane.metadata
+
+	spec: corev1.#PersistentVolumeClaimSpec & {
+		//storageClassName: slow
+		accessModes: ["ReadWriteOnce"]
+		volumeMode: "Filesystem"
+		resources: requests: storage: "5Gi"
+	}
+}
