@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-mkdir -p /etc/systemd/system /etc/containerd /etc/kubernetes/manifests /var/lib/kubelet /etc/cni/net.d
+mkdir -p /etc/systemd/system /etc/containerd /etc/kubernetes/manifests /usr/share/kubernetes /var/lib/kubelet /etc/cni/net.d
 
 cat > /etc/sysctl.d/99-kubernetes-cri.conf << EOF
 net.bridge.bridge-nf-call-ip6tables = 1
@@ -321,7 +321,7 @@ MemoryAccounting=true
 Slice=pods.slice
 EOF
 
-cat > /etc/kubernetes/kubelet.yaml << EOF
+cat > /usr/share/kubernetes/kubelet.yaml << EOF
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 authentication:
@@ -378,6 +378,7 @@ failSwapOn: false
 # would need to be made, there are many options to it...
 resolvConf: /etc/resolv.conf
 EOF
+ln -s /usr/share/kubernetes/kubelet.yaml /etc/kubernetes/kubelet.yaml
 
 systemctl enable kubelet detect-cgroup-root
 

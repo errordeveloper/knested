@@ -24,7 +24,41 @@ patch_secret() {
 if [ -e /etc/kubernetes/kubeadm-init.yaml ] \
   && [ -n "$(get_secret "${cluster}-join-token" --output="jsonpath={.data.ca_hash}")" ] \
   && [ -n "$(get_secret "${cluster}-kubeconfig" --output="jsonpath={.data.kubeconfig}")" ] ; then
-      echo "cluster already configured"
+      echo "cluster already initialised"
+      systemctl stop kubelet
+      crictl ps -aq | xargs crictl rm -f
+      echo "resetting control plane configuration to use new pod IP"
+
+      stale_files=(
+        manifests/etcd.yaml
+        manifests/kube-apiserver.yaml
+        manifests/kube-controller-manager.yaml
+        manifests/kube-scheduler.yaml
+        pki/apiserver-etcd-client.crt
+        pki/apiserver-etcd-client.key
+        pki/apiserver-kubelet-client.crt
+        pki/apiserver-kubelet-client.key
+        pki/apiserver.crt
+        pki/apiserver.key
+        pki/front-proxy-ca.crt
+        pki/front-proxy-ca.key
+        pki/front-proxy-client.crt
+        pki/front-proxy-client.key
+        admin.conf
+        super-admin.conf
+        kubelet.conf
+        controller-manager.conf
+        scheduler.conf
+      )
+      (cd /etc/kubernetes/ ; rm -f "${stale_files[@]}")
+
+      kubeadm init --config=/etc/kubernetes/kubeadm-init.yaml phase certs all
+      kubeadm init --config=/etc/kubernetes/kubeadm-init.yaml phase kubeconfig all
+      kubeadm init --config=/etc/kubernetes/kubeadm-init.yaml phase etcd local
+      kubeadm init --config=/etc/kubernetes/kubeadm-init.yaml phase control-plane all
+
+      systemctl start kubelet
+
       exit 0
 fi
 
@@ -36,6 +70,8 @@ fi
 # on EKS without Kata SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables are required
 # on D4M Swap is Requires
 
+mkdir -p /etc/kubernetes/manifests /etc/kubernetes/pki
+ln -s /usr/share/kubernetes/kubelet.yaml /etc/kubernetes/kubelet.yaml
 
 cat > /etc/kubernetes/kubeadm-init.yaml << EOF
 ---

@@ -175,13 +175,18 @@ _roleVolumeMounts: {
 		},
 		{
 			name:      "cp-data"
-			mountPath: "/etc/kubernetes/pki"
-			subPath:   "etc-kubernetes-pki"
+			mountPath: "/etc/kubernetes"
+			subPath:   "etc-kubernetes"
 		},
 		{
 			name:      "cp-data"
 			mountPath: "/var/lib/etcd"
 			subPath:   "var-lib-etcd"
+		},
+		{
+			name:      "cp-data"
+			mountPath: "/var/lib/kubelet"
+			subPath:   "var-lib-kubelet"
 		},
 
 	]
