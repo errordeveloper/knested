@@ -36,7 +36,7 @@ kind: ClusterConfiguration
 kubernetesVersion: "${KUBERNETES_VERSION}"
 clusterName: "${cluster}"
 apiServer:
-  certSANs: ["${cluster}"]
+  certSANs: ["${cluster}", "127.0.0.1"]
 networking:
   serviceSubnet: "10.97.0.0/16"
 ---
