@@ -82,6 +82,8 @@ tc-1-node-5ddb9c8999-gqcv6   Ready    <none>          11m   v1.30.3
 [test-cluster/tc-1] $
 ```
 
+To cleanup you can just run `kubectl delete ns test-cluster`.
+
 If you just want to see how it works, checkout the following dirctories:
 - [`cluster/`](cluster): for CUE configs
 - [`images/kubeadm-ubuntu/`](images/kubeadm-ubuntu): for image builds
