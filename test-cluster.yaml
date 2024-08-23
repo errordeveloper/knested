@@ -19,6 +19,25 @@ spec:
   type: ClusterIP
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: timoni
+    app.kubernetes.io/name: test-cluster-cp
+    app.kubernetes.io/version: 0.0.0-devel
+    knested.dev/cluster: test-cluster
+    knested.dev/role: cp
+  name: test-cluster-cp
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: Secret
 metadata:
   labels:
@@ -127,7 +146,7 @@ spec:
           value: /etc/kubernetes/admin.conf
         - name: CONTAINER_RUNTIME_ENDPOINT
           value: unix:///run/containerd/containerd.sock
-        image: ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-1.29.1@sha256:3cf5485ca939612af2a7603711fc114a42cfcdb8a163d5d266576d3370a65cb1
+        image: ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-1.30.3@sha256:b725919f07258e24465cd19964e15c71252b79885ed8abbcd79dd6f9b51843fa
         imagePullPolicy: IfNotPresent
         name: main
         ports:
@@ -164,6 +183,15 @@ spec:
           readOnly: false
         - mountPath: /etc/parent-management-cluster/secrets
           name: parent-management-cluster-service-account-token
+        - mountPath: /etc/kubernetes
+          name: cp-data
+          subPath: etc-kubernetes
+        - mountPath: /var/lib/etcd
+          name: cp-data
+          subPath: var-lib-etcd
+        - mountPath: /var/lib/kubelet
+          name: cp-data
+          subPath: var-lib-kubelet
       serviceAccountName: test-cluster-cp
       volumes:
       - downwardAPI:
@@ -188,6 +216,9 @@ spec:
           sources:
           - serviceAccountToken:
               path: token
+      - name: cp-data
+        persistentVolumeClaim:
+          claimName: test-cluster-cp
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -266,7 +297,7 @@ spec:
           value: /etc/kubernetes/kubelet.conf
         - name: CONTAINER_RUNTIME_ENDPOINT
           value: unix:///run/containerd/containerd.sock
-        image: ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-1.29.1@sha256:3cf5485ca939612af2a7603711fc114a42cfcdb8a163d5d266576d3370a65cb1
+        image: ghcr.io/errordeveloper/knested/kubeadm:ubuntu-22.04-1.30.3@sha256:b725919f07258e24465cd19964e15c71252b79885ed8abbcd79dd6f9b51843fa
         imagePullPolicy: IfNotPresent
         name: main
         ports:
@@ -327,45 +358,5 @@ spec:
           sources:
           - secret:
               name: test-cluster-join-token
-              optional: false
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  annotations:
-    action.timoni.sh/force: enabled
-  labels:
-    app.kubernetes.io/managed-by: timoni
-    app.kubernetes.io/name: test-cluster-sonobuoy
-    app.kubernetes.io/version: 0.0.0-devel
-    knested.dev/cluster: test-cluster
-  name: test-cluster-sonobuoy
-  namespace: default
-spec:
-  backoffLimit: 1
-  template:
-    metadata:
-      annotations:
-        timoni.sh/checksum: d6c82b5e-2adb-5a89-a06b-18734d97f052
-    spec:
-      containers:
-      - command:
-        - /sonobuoy
-        - run
-        - --kubeconfig=/etc/kubeadm/secrets/kubeconfig
-        - --wait=1440
-        image: docker.io/sonobuoy/sonobuoy:v0.57.1@sha256:6d80fd42ee1f4a8c5bd0a744af2663c2f1b64b820aaaf3622be6ba91564087d4
-        imagePullPolicy: IfNotPresent
-        name: sonobuoy
-        volumeMounts:
-        - mountPath: /etc/kubeadm/secrets
-          name: kubeconfig
-      restartPolicy: Never
-      volumes:
-      - name: kubeconfig
-        projected:
-          sources:
-          - secret:
-              name: test-cluster-kubeconfig
               optional: false
 ---
