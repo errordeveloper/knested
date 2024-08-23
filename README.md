@@ -1,7 +1,5 @@
 # `knested`: Kubernetes-in-Kubernetes for GitOps-Cluster-as-Service
 
-***This is still and early prototype, there is not implementation of a controller as such.***
-
 This project enables one to easily deploy Kubernetes into Kubernetes, akin to kind on Docker.
 One could use kind in a pod, but if they need to run several nodes, the pod will end up quite
 large. So knested is very much like kind in a pod, but it uses a pod for each node, so it should
