@@ -51,20 +51,20 @@ test -n "${KUBERNETES_VERSION}" || exit 1
 # and cater for that use-cases, for now one is meant to to fork this image if they really
 # need to customise it a lot
 
-CNI_VERSION="1.4.0"
+CNI_VERSION="1.6.1"
 get_tarball "https://github.com/containernetworking/plugins/releases/download/v${CNI_VERSION}/cni-plugins-linux-${ALT_ARCH}-v${CNI_VERSION}.tgz" /opt/cni/bin
 
-CRICTL_VERSION="1.29.0"
+CRICTL_VERSION="1.32.0"
 get_tarball "https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/crictl-v${CRICTL_VERSION}-linux-${ALT_ARCH}.tar.gz" /usr/bin
 
-CONTAINERD_VERSION="${CONTAINERD_VERSION:-1.7.12}"
+CONTAINERD_VERSION="${CONTAINERD_VERSION:-2.0.1}"
 get_tarball "https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VERSION}/containerd-${CONTAINERD_VERSION}-linux-${ALT_ARCH}.tar.gz" /usr
 
-RUNC_VERSION="${RUNC_VERSION:-1.1.11}"
+RUNC_VERSION="${RUNC_VERSION:-1.2.3}"
 get_binary "https://github.com/opencontainers/runc/releases/download/v${RUNC_VERSION}/runc.${ALT_ARCH}" runc
 
 for b in kubeadm kubectl kubelet ; do
-  get_binary "https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/${ALT_ARCH}/${b}" "${b}"
+  get_binary "https://dl.k8s.io/v${KUBERNETES_VERSION}/bin/linux/${ALT_ARCH}/${b}" "${b}"
 done
 
 cat > /etc/versions.env << EOF

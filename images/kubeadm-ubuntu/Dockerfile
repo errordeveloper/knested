@@ -56,7 +56,7 @@ ARG KUBERNETES_VERSION
 COPY download.sh /tmp/download.sh
 RUN KUBERNETES_VERSION=${KUBERNETES_VERSION} /tmp/download.sh
 
-COPY cilium-1.14-kubeadm.yaml /etc/cilium.yaml
+COPY cilium-1.16-kubeadm.yaml /etc/cilium.yaml
 COPY configure.sh /tmp/configure.sh
 RUN /tmp/configure.sh
 
