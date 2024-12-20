@@ -8,8 +8,8 @@ package main
 values: {
 	images: coreNode: {
 		repository: "ghcr.io/errordeveloper/knested/kubeadm"
-		digest:     "sha256:b725919f07258e24465cd19964e15c71252b79885ed8abbcd79dd6f9b51843fa"
-		tag:        "ubuntu-22.04-1.30.3"
+		digest:     "sha256:f843f5eb90b23fe045a4daf5fb833f094c82e941a2b716078363c7d780a8a1c0"
+		tag:        "ubuntu-22.04-1.30.8"
 	}
 
 	// service: type: "LoadBalancer"
