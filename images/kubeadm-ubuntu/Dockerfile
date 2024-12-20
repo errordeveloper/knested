@@ -39,6 +39,7 @@ RUN >/var/lib/dbus/machine-id
 RUN systemctl set-default multi-user.target
 RUN systemctl mask \
       console-getty.service \
+      getty@tty1.service \
       dev-hugepages.mount \
       proc-sys-fs-binfmt_misc.automount \
       sys-fs-fuse-connections.mount \
