@@ -100,8 +100,8 @@ kubeadm init --v=9 \
   --config=/etc/kubernetes/kubeadm-init.yaml \
   --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap
 
-# install cilium manifest
-kubectl apply --filename=/etc/cilium.yaml --kubeconfig=/etc/kubernetes/admin.conf
+# install manifest bundle
+kubectl apply --filename=/etc/kubeadm/manifests --kubeconfig=/etc/kubernetes/admin.conf
 
 # write secrets to the parent cluster
 join_token="$(kubeadm token create --ttl=0 --description="Secondary token for automation" --v=9)"

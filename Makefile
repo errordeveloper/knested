@@ -1,6 +1,5 @@
 CILIUM_MANIFESTS := \
   management-cluster-core/cilium-1.16-eks.yaml \
-  images/kubeadm-ubuntu/cilium-1.16-kubeadm.yaml
 
 manifest: $(CILIUM_MANIFESTS)
 all: manifest images-push
@@ -13,10 +12,6 @@ management-cluster-core/cilium-1.16-eks.yaml:
 	  --set ipam.mode=eni \
 	  --set egressMasqueradeInterfaces=eth0 \
       --set nodeinit.enabled=true \
-	  --namespace kube-system > $@
-
-images/kubeadm-ubuntu/cilium-1.16-kubeadm.yaml:
-	helm template cilium cilium/cilium --version 1.16.5 \
 	  --namespace kube-system > $@
 
 images-build:
