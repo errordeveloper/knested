@@ -140,6 +140,15 @@ _readinessProbes: {
 			}]
 		},
 		{
+			name: "manifests"
+			projected: sources: [{
+				secret: {
+					name:     "\(#clusterName)-\(_constants.secrets.manifests)"
+					optional: false
+				}
+			}]
+		},
+		{
 			name: "cp-data"
 			persistentVolumeClaim: claimName: "\(#clusterName)-cp"
 		},
@@ -172,6 +181,10 @@ _roleVolumeMounts: {
 		{
 			name:      "parent-management-cluster-service-account-token"
 			mountPath: "/etc/parent-management-cluster/secrets"
+		},
+		{
+			name:      "manifests"
+			mountPath: "/etc/kubeadm/manifests"
 		},
 		{
 			name:      "cp-data"

@@ -27,4 +27,5 @@ import (
 			annotations: #config.secretAnnotations
 		}
 	}
+	...
 }

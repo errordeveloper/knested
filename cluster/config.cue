@@ -1,7 +1,10 @@
 package cluster
 
 import (
+	"encoding/json"
+
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	timoniv1 "timoni.sh/core/v1alpha1"
 )
 
@@ -69,6 +72,14 @@ import (
 		}
 	}
 
+	manifests?: {
+		[string]: {
+			metav1.#TypeMeta
+			metav1.#ObjectMeta
+			...
+		}
+	}
+
 	conformanceTest: {
 		enabled:        *false | bool
 		sonobouyImage!: timoniv1.#Image
@@ -100,6 +111,13 @@ import (
 			"Secret/\(secret)": #Secret & {
 				#config: config
 				#name:   secretName
+			}
+		}
+		"Secret/\(_constants.secrets.manifests)": #Secret & {
+			stringData: {
+				for path, manifest in config.manifests {
+					"\(path).json": json.Marshal(manifest)
+				}
 			}
 		}
 		"PersistentVolumeClaim/cp": #PersistentVolumeClaim & {
@@ -178,6 +196,7 @@ _constants: {
 	secrets: {
 		joinToken:  "join-token"
 		kubeconfig: "kubeconfig"
+		manifests:  "manifests"
 	}
 }
 
