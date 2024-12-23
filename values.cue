@@ -4,16 +4,27 @@
 
 package main
 
+import (
+	cilium "github.com/errordeveloper/knested/manifests/cilium-1.16.5:cilium"
+)
+
 // Defaults
 values: {
 	images: coreNode: {
 		repository: "ghcr.io/errordeveloper/knested/kubeadm"
-		digest:     "sha256:f843f5eb90b23fe045a4daf5fb833f094c82e941a2b716078363c7d780a8a1c0"
+		digest:     "sha256:f4f44eda8adcdae54419796bdf6f389ebb9fd729cf226891fffd5945034b75af"
 		tag:        "ubuntu-22.04-1.30.8"
 	}
 
 	// service: type: "LoadBalancer"
 
+	manifests: cilium
+	controlPlane: {
+		// tolerations: [{operator: "Exists"}]
+	}
+	node: {
+		// tolerations: [{operator: "Exists"}]
+	}
 	conformanceTest: {
 		enabled: false
 		sonobouyImage: {
