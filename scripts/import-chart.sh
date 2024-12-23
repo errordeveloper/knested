@@ -9,7 +9,8 @@ dir="$(mktemp -d "${PWD}/import-chart.XXXXXX")"
 helm template --output-dir="${dir}" "$@" >/dev/null
 
 resources=($(find "${dir}" -type f -name '*.yaml'))
+path_expr="$(printf 'strings.TrimSuffix(strings.Join(strings.Split(path.Rel("%s", filename), "/"), "-"), ".yaml")' "${dir}")"
 
-cue import --outfile - --with-context --path "path.Rel(\"/${dir}\", filename)" "${resources[@]}"
+cue import --outfile - --with-context --path "${path_expr}" "${resources[@]}"
 
 rm -rf "${dir}"
