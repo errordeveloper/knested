@@ -16,7 +16,9 @@ mkdir -p "${output_dir}"
 
 echo 'package cilium' > "${output_dir}/cilium.cue"
 
-"${script_dir}/import-chart.sh" cilium cilium/cilium --version "${version}" \
+"${script_dir}/import-chart.sh" cilium cilium/cilium \
+  --version "${version}" \
+  --namespace "kube-system" \
   --set cgroup.autoMount.enabled=false \
   >> "${output_dir}/cilium.cue"
 
