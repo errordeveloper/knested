@@ -1,4 +1,5 @@
 package cilium
+
 "cilium-templates-cilium-ca-secret": {
 	// Source: cilium/templates/cilium-ca-secret.yaml
 	apiVersion: "v1"
@@ -1952,7 +1953,7 @@ package cilium
 				affinity: {
 					podAntiAffinity: requiredDuringSchedulingIgnoredDuringExecution: [{
 						labelSelector: matchLabels: "io.cilium/app": "operator"
-						topologyKey:                                 "kubernetes.io/hostname"
+						topologyKey: "kubernetes.io/hostname"
 					}]
 				}
 				nodeSelector: "kubernetes.io/os": "linux"
