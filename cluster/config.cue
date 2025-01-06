@@ -6,6 +6,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	timoniv1 "timoni.sh/core/v1alpha1"
+
+	"github.com/errordeveloper/knested/manifests/cilium-1.16.5:cilium"
 )
 
 // Config defines the schema and defaults for the Instance values.
@@ -115,8 +117,13 @@ import (
 		}
 		"Secret/\(_constants.secrets.manifests)": #Secret & {
 			stringData: {
-				for path, manifest in config.manifests {
-					"\(path).json": json.Marshal(manifest)
+				for path, manifest in cilium {
+					"00-init-\(path).json": json.Marshal(manifest)
+				}
+				if config.manifest != _|_ {
+					for path, manifest in config.manifests {
+						"01-custom-\(path).json": json.Marshal(manifest)
+					}
 				}
 			}
 		}

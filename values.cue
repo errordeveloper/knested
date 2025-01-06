@@ -4,10 +4,6 @@
 
 package main
 
-import (
-	cilium "github.com/errordeveloper/knested/manifests/cilium-1.16.5:cilium"
-)
-
 // Defaults
 values: {
 	images: coreNode: {
@@ -18,7 +14,6 @@ values: {
 
 	// service: type: "LoadBalancer"
 
-	manifests: cilium
 	controlPlane: {
 		// tolerations: [{operator: "Exists"}]
 	}
