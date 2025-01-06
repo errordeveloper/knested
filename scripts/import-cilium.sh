@@ -19,3 +19,5 @@ echo 'package cilium' > "${output_dir}/cilium.cue"
 "${script_dir}/import-chart.sh" cilium cilium/cilium --version "${version}" \
   --set cgroup.autoMount.enabled=false \
   >> "${output_dir}/cilium.cue"
+
+cue fmt "${output_dir}/cilium.cue"
