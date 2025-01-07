@@ -123,6 +123,10 @@ if [ -d /etc/kubeadm/manifests/extra ] ; then
   files=($(ls -A /etc/kubeadm/manifests/extra))
   if [ "${#files[@]}" -gt 0 ] ; then
     apply_manifests_with_rety /etc/kubeadm/manifests/extra
+    # roll Cilium pods if any CiliumNodeConfig CRs were specified in extra manifests
+    kubectl get --no-headers --show-kind --filename="/etc/kubeadm/manifests/extra" \
+      | grep '^ciliumnodeconfig.cilium.io/$' \
+      && kubectl rollout restart --namespace="kube-system" daemonset/cilium
   fi
 fi
 
