@@ -1,7 +1,7 @@
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.26.15 ghcr.io/errordeveloper/knested/kubeadm@sha256:5e1198657062b1dba252a33dba8faa9aa125e15c62d00e819ef20f1808926af9
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.27.16 ghcr.io/errordeveloper/knested/kubeadm@sha256:9b4b9845770a4c9f831234763004d7f139902099dd8e4dec415a4c9eaf07f70d
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.28.15 ghcr.io/errordeveloper/knested/kubeadm@sha256:8927597ba9a910ab777b2f67740b357786cfd796978937b8cecbe6bb7d9f338b
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.29.12 ghcr.io/errordeveloper/knested/kubeadm@sha256:bd1cc218a121eb4cd157f0bf5b43afd16889cae13d4984c94259c08e1ff68c15
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.30.8 ghcr.io/errordeveloper/knested/kubeadm@sha256:2ac773b571dbd26dde166a3fa81f0b30298dd1c044d9948c15829b32e8020f98
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.31.4 ghcr.io/errordeveloper/knested/kubeadm@sha256:f351cdb463aa26b65e567b127ba2e714d6f24625968c4591b3a184226989940c
-ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.32.0 ghcr.io/errordeveloper/knested/kubeadm@sha256:1a0bf99cc1f0362bb147a1de2d2cdc8e5f49e3795cef353005bc4e2b624be653
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.26.15 ghcr.io/errordeveloper/knested/kubeadm@sha256:ea3cf908dc4ff72238ce7f17ac290f7d2256c508b014c08a093cd038e64dcf7a
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.27.16 ghcr.io/errordeveloper/knested/kubeadm@sha256:6af8fe99640461bb84ddfc6739770c222a5faf5126aebba328e7eca7304151cc
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.28.15 ghcr.io/errordeveloper/knested/kubeadm@sha256:cdb657eb2d5bfd4183b5fc532cabfaa880aca75bf81d2538a20dc60b5e32fc22
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.29.12 ghcr.io/errordeveloper/knested/kubeadm@sha256:6f16b7a6a82b33db8d365656da0e07b06447ccedcca657146354a54468f94eb5
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.30.8 ghcr.io/errordeveloper/knested/kubeadm@sha256:00dc85aa1ecbbd14ee872348582d5665d80da3096769b568247a1728fadfb674
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.31.4 ghcr.io/errordeveloper/knested/kubeadm@sha256:e2ff91da68fae34f8c7c027edd5dd027f7bd482eef6cb06f0cc0b2181b91fd50
+ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-1.32.0 ghcr.io/errordeveloper/knested/kubeadm@sha256:b582661de6c9c234440593f56b14d70482589c604f648004104d624f43a8b895
