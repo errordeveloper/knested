@@ -80,7 +80,10 @@ import (
 			},
 		]
 
-		volumes: (#_roleVolumes & {#clusterName: #config.clusterName})[#role]
+		volumes: (#_roleVolumes & {
+			#clusterName:       #config.clusterName
+			#hasExtraManifests: true
+		})[#role]
 
 		if roleConfig.tolerations != _|_ {
 			tolerations: roleConfig.tolerations
@@ -140,11 +143,20 @@ _readinessProbes: {
 			}]
 		},
 		{
-			name: "manifests"
+			name: _constants.secrets.initManifests
 			projected: sources: [{
 				secret: {
-					name:     "\(#clusterName)-\(_constants.secrets.manifests)"
+					name:     "\(#clusterName)-\(_constants.secrets.initManifests)"
 					optional: false
+				}
+			}]
+		},
+		{
+			name: _constants.secrets.extraManifests
+			projected: sources: [{
+				secret: {
+					name:     "\(#clusterName)-\(_constants.secrets.extraManifests)"
+					optional: true
 				}
 			}]
 		},
@@ -183,8 +195,12 @@ _roleVolumeMounts: {
 			mountPath: "/etc/parent-management-cluster/secrets"
 		},
 		{
-			name:      "manifests"
-			mountPath: "/etc/kubeadm/manifests"
+			name:      _constants.secrets.initManifests
+			mountPath: "/etc/kubeadm/manifests/init"
+		},
+		{
+			name:      _constants.secrets.extraManifests
+			mountPath: "/etc/kubeadm/manifests/extra"
 		},
 		{
 			name:      "cp-data"

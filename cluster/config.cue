@@ -110,19 +110,23 @@ import (
 			#config: config
 		}
 		for secret, secretName in _constants.secrets {
-			"Secret/\(secret)": #Secret & {
+			"Secret/\(secretName)": #Secret & {
 				#config: config
 				#name:   secretName
 			}
 		}
-		"Secret/\(_constants.secrets.manifests)": #Secret & {
+		"Secret/\(_constants.secrets.initManifests)": #Secret & {
 			stringData: {
 				for path, manifest in cilium {
-					"00-init-\(path).json": json.Marshal(manifest)
+					"\(path).json": json.Marshal(manifest)
 				}
-				if config.manifest != _|_ {
+			}
+		}
+		"Secret/\(_constants.secrets.extraManifests)": #Secret & {
+			if config.manifests != _|_ {
+				stringData: {
 					for path, manifest in config.manifests {
-						"01-custom-\(path).json": json.Marshal(manifest)
+						"\(path).json": json.Marshal(manifest)
 					}
 				}
 			}
@@ -201,9 +205,10 @@ _constants: {
 	}
 
 	secrets: {
-		joinToken:  "join-token"
-		kubeconfig: "kubeconfig"
-		manifests:  "manifests"
+		joinToken:      "join-token"
+		kubeconfig:     "kubeconfig"
+		initManifests:  "init-manifests"
+		extraManifests: "extra-manifests"
 	}
 }
 

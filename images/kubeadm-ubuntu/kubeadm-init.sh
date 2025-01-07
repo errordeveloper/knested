@@ -21,6 +21,21 @@ patch_secret() {
       "$@"
 }
 
+apply_manifests() {
+  kubectl apply \
+    --kubeconfig="/etc/kubernetes/admin.conf" \
+    --server-side="true" \
+    --filename="$1"
+}
+
+apply_manifests_with_rety() {
+  until apply_manifests "$1" ; do
+    echo "'apply_manifests $1' failed, retrying"
+    sleep 1
+  done
+}
+
+
 if [ -e /etc/kubernetes/kubeadm-init.yaml ] \
   && [ -n "$(get_secret "${cluster}-join-token" --output="jsonpath={.data.ca_hash}")" ] \
   && [ -n "$(get_secret "${cluster}-kubeconfig" --output="jsonpath={.data.kubeconfig}")" ] ; then
@@ -100,8 +115,16 @@ kubeadm init --v=9 \
   --config=/etc/kubernetes/kubeadm-init.yaml \
   --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap
 
-# install manifest bundle
-kubectl apply --filename=/etc/kubeadm/manifests --kubeconfig=/etc/kubernetes/admin.conf
+# install manifest bundles
+
+apply_manifests_with_rety /etc/kubeadm/manifests/init
+
+if [ -d /etc/kubeadm/manifests/extra ] ; then
+  files=($(ls -A /etc/kubeadm/manifests/extra))
+  if [ "${#files[@]}" -gt 0 ] ; then
+    apply_manifests_with_rety /etc/kubeadm/manifests/extra
+  fi
+fi
 
 # write secrets to the parent cluster
 join_token="$(kubeadm token create --ttl=0 --description="Secondary token for automation" --v=9)"
