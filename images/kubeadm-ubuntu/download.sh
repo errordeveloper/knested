@@ -12,7 +12,7 @@ get_tarball() {
 
   mkdir -p "${dir}"
 
-  curl --fail --show-error --location --silent --output "${tmp}" "${url}"
+  curl --fail --show-error --location --silent --retry 3 --retry-all-errors --output "${tmp}" "${url}"
   tar -C "${dir}" -xf "${tmp}"
 
   rm -f "${tmp}"
@@ -24,7 +24,7 @@ get_file() {
 
   mkdir -p "$(dirname "${output}")"
 
-  curl --fail --show-error --location --silent --output "${output}" "${url}"
+  curl --fail --show-error --location --silent --retry 3 --retry-all-errors --output "${output}" "${url}"
 }
 
 get_binary() {
@@ -64,7 +64,7 @@ RUNC_VERSION="${RUNC_VERSION:-1.3.0}"
 get_binary "https://github.com/opencontainers/runc/releases/download/v${RUNC_VERSION}/runc.${ALT_ARCH}" runc
 
 for b in kubeadm kubectl kubelet ; do
-  get_binary "https://dl.k8s.io/v${KUBERNETES_VERSION}/bin/linux/${ALT_ARCH}/${b}" "${b}"
+  get_binary "https://cdn.dl.k8s.io/release/v${KUBERNETES_VERSION}/bin/linux/${ALT_ARCH}/${b}" "${b}"
 done
 
 cat > /etc/versions.env << EOF
