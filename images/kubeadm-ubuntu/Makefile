@@ -1,4 +1,4 @@
-KUBERNETES_VERSIONS := 1.26.15 1.27.16 1.28.15 1.29.12 1.30.8 1.31.4 1.32.0
+KUBERNETES_VERSIONS := 1.26.15 1.27.16 1.28.15 1.29.15 1.30.12 1.31.4 1.32.4 1.33.0
 
 image = ghcr.io/errordeveloper/knested/kubeadm:ubuntu-24.04-$(1)
 
