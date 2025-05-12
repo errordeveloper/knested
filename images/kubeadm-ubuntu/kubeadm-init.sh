@@ -120,7 +120,7 @@ kubeadm init --v=9 \
 apply_manifests_with_rety /etc/kubeadm/manifests/init
 
 if [ -d /etc/kubeadm/manifests/extra ] ; then
-  files=($(ls -A /etc/kubeadm/manifests/extra))
+  files=($(ls -A /etc/kubeadm/manifests/extra/..data))
   if [ "${#files[@]}" -gt 0 ] ; then
     apply_manifests_with_rety /etc/kubeadm/manifests/extra
     # roll Cilium pods if any CiliumNodeConfig CRs were specified in extra manifests
