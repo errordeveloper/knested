@@ -30,11 +30,10 @@ import (
 					annotations: roleConfig.podAnnotations
 				}
 			}
-			spec: podSpec
 		}
 	}
 
-	let podSpec = corev1.#PodSpec & {
+	spec: template: spec: corev1.#PodSpec & {
 		serviceAccountName:           roleConfig.metadata.name
 		automountServiceAccountToken: false
 		if #config.runtimeClass != _|_ {
