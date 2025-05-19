@@ -37,6 +37,9 @@ import (
 	let podSpec = corev1.#PodSpec & {
 		serviceAccountName:           roleConfig.metadata.name
 		automountServiceAccountToken: false
+		if #config.runtimeClass != _|_ {
+			runtimeClassName: #config.runtimeClass
+		}
 
 		containers: [
 			{

@@ -46,6 +46,8 @@ import (
 		type: *"ClusterIP" | string
 	}
 
+	runtimeClass?: string
+
 	node: {
 		replicas: *1 | int & >0
 
