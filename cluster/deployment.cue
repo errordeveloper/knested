@@ -47,7 +47,7 @@ import (
 				image:           #config.images.coreNode.reference
 				imagePullPolicy: #config.images.coreNode.pullPolicy
 
-				let _systemdTargetUnit = "kubeadm@\(_constants.componentRoles[#role]).target"
+				let _systemdTargetUnit = "kubeadm@\(roleAlias).target"
 
 				command: [
 					"/lib/systemd/systemd",
