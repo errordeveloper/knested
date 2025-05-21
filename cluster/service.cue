@@ -4,7 +4,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-#Service: corev1.#Service & {
+#ClusterService: corev1.#Service & {
 	#config: #Config
 
 	apiVersion: "v1"
@@ -33,5 +33,23 @@ import (
 			},
 		]
 		selector: #config.controlPlane.selector.labels
+	}
+}
+
+#HeadlessService: corev1.#Service & {
+	#config: #Config
+	#role:   string
+
+	let roleConfig = #config[#role]
+
+	apiVersion: "v1"
+	kind:       "Service"
+	metadata:   roleConfig.metadata
+
+	spec: {
+		type:            "ClusterIP"
+		clusterIP:       "None"
+		sessionAffinity: "None"
+		selector:        roleConfig.selector.labels
 	}
 }

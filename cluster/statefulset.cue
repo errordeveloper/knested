@@ -31,9 +31,10 @@ import (
 				}
 			}
 		}
+		serviceName: roleConfig.metadata.name
 		volumeClaimTemplates: [{
 			metadata: {
-				name:   "\(roleAlias)-data"
+				name:   "data"
 				labels: roleConfig.metadata.labels
 			}
 			spec: corev1.#PersistentVolumeClaimSpec & {
@@ -200,6 +201,7 @@ _roleVolumeMounts: {
 	controlPlane: [
 		_metadataVolumeMount,
 		for x in _hostPathVolumeMounts {x},
+		for x in _persistedVolumeMounts {x},
 		{
 			name:      "parent-management-cluster-service-account-token"
 			mountPath: "/etc/parent-management-cluster/secrets"
@@ -213,43 +215,23 @@ _roleVolumeMounts: {
 			mountPath: "/etc/kubeadm/manifests/extra"
 		},
 		{
-			name:      "cp-data"
+			name:      "data"
 			mountPath: "/etc/kubernetes"
 			subPath:   "etc-kubernetes"
 		},
 		{
-			name:      "cp-data"
+			name:      "data"
 			mountPath: "/var/lib/etcd"
 			subPath:   "var-lib-etcd"
 		},
-		{
-			name:      "cp-data"
-			mountPath: "/var/lib/kubelet"
-			subPath:   "var-lib-kubelet"
-		},
-		{
-			name:      "cp-data"
-			mountPath: "/var/lib/containerd"
-			subPath:   "var-lib-containerd"
-		},
-
 	]
 	node: [
 		_metadataVolumeMount,
 		for x in _hostPathVolumeMounts {x},
+		for x in _persistedVolumeMounts {x},
 		{
 			name:      "join-secret"
 			mountPath: "/etc/kubeadm/secrets"
-		},
-		{
-			name:      "node-data"
-			mountPath: "/var/lib/kubelet"
-			subPath:   "var-lib-kubelet"
-		},
-		{
-			name:      "node-data"
-			mountPath: "/var/lib/containerd"
-			subPath:   "var-lib-containerd"
 		},
 	]
 }
@@ -307,5 +289,18 @@ _hostPathVolumeMounts: [
 		name:      "xtables-lock"
 		mountPath: "/run/xtables.lock"
 		readOnly:  false
+	},
+]
+
+_persistedVolumeMounts: [
+	{
+		name:      "data"
+		mountPath: "/var/lib/kubelet"
+		subPath:   "var-lib-kubelet"
+	},
+	{
+		name:      "data"
+		mountPath: "/var/lib/containerd"
+		subPath:   "var-lib-containerd"
 	},
 ]

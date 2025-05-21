@@ -108,7 +108,7 @@ import (
 	config: #Config
 
 	objects: {
-		"Service/cluster": #Service & {
+		"Service/cluster": #ClusterService & {
 			#config: config
 		}
 		for secret, secretName in _constants.secrets {
@@ -143,6 +143,10 @@ import (
 				#role:   role
 			}
 			"RoleBinding/\(role)": #RoleBinding & {
+				#config: config
+				#role:   role
+			}
+			"Service/\(role)": #HeadlessService & {
 				#config: config
 				#role:   role
 			}
