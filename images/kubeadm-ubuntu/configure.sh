@@ -69,11 +69,8 @@ systemctl enable containerd
 
 cat > /etc/containerd/config.toml << EOF
 version = 3
-# use tmpfs in /run for both directories now, we may preserve root in the future,
-# and possibly even preload it with images, but right now using /var/lib is broken
-# in kata as it's on 9p filesystem that doesn't permit mknod
-root = "/run/containerd/root"
-state = "/run/containerd/state"
+root = "/var/lib/containerd"
+state = "/run/containerd"
 temp = ''
 plugin_dir = ''
 disabled_plugins = []
