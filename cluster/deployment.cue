@@ -5,7 +5,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-#Deployment: appsv1.#Deployment & {
+#StatefulSet: appsv1.#StatefulSet & {
 	#config: #Config
 	#role:   string
 
@@ -13,10 +13,10 @@ import (
 	let roleAlias = _constants.componentRoles[#role]
 
 	apiVersion: "apps/v1"
-	kind:       "Deployment"
+	kind:       "StatefulSet"
 	metadata:   roleConfig.metadata
 
-	spec: appsv1.#DeploymentSpec & {
+	spec: appsv1.#StatefulSetSpec & {
 		replicas: roleConfig.replicas
 		selector: matchLabels: roleConfig.selector.labels
 		template: {
@@ -31,6 +31,18 @@ import (
 				}
 			}
 		}
+		volumeClaimTemplates: [{
+			metadata: {
+				name:   "\(roleAlias)-data"
+				labels: roleConfig.metadata.labels
+			}
+			spec: corev1.#PersistentVolumeClaimSpec & {
+				accessModes: ["ReadWriteOnce"]
+				volumeMode: "Filesystem"
+				// TODO: make requests configurable
+				resources: requests: storage: "5Gi"
+			}
+		}]
 	}
 
 	spec: template: spec: corev1.#PodSpec & {
@@ -162,10 +174,6 @@ _readinessProbes: {
 				}
 			}]
 		},
-		{
-			name: "cp-data"
-			persistentVolumeClaim: claimName: "\(#clusterName)-cp"
-		},
 	]
 	node: [
 		_metadataVolume,
@@ -219,6 +227,11 @@ _roleVolumeMounts: {
 			mountPath: "/var/lib/kubelet"
 			subPath:   "var-lib-kubelet"
 		},
+		{
+			name:      "cp-data"
+			mountPath: "/var/lib/containerd"
+			subPath:   "var-lib-containerd"
+		},
 
 	]
 	node: [
@@ -227,6 +240,16 @@ _roleVolumeMounts: {
 		{
 			name:      "join-secret"
 			mountPath: "/etc/kubeadm/secrets"
+		},
+		{
+			name:      "node-data"
+			mountPath: "/var/lib/kubelet"
+			subPath:   "var-lib-kubelet"
+		},
+		{
+			name:      "node-data"
+			mountPath: "/var/lib/containerd"
+			subPath:   "var-lib-containerd"
 		},
 	]
 }
@@ -286,18 +309,3 @@ _hostPathVolumeMounts: [
 		readOnly:  false
 	},
 ]
-
-#PersistentVolumeClaim: corev1.#PersistentVolumeClaim & {
-	#config: #Config
-
-	apiVersion: "v1"
-	kind:       "PersistentVolumeClaim"
-	metadata:   #config.controlPlane.metadata
-
-	spec: corev1.#PersistentVolumeClaimSpec & {
-		//storageClassName: slow
-		accessModes: ["ReadWriteOnce"]
-		volumeMode: "Filesystem"
-		resources: requests: storage: "5Gi"
-	}
-}

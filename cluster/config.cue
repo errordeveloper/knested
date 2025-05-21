@@ -133,9 +133,6 @@ import (
 				}
 			}
 		}
-		"PersistentVolumeClaim/cp": #PersistentVolumeClaim & {
-			#config: config
-		}
 		for role, _ in _constants.componentRoles {
 			"ServiceAccount/\(role)": #ServiceAccount & {
 				#config: config
@@ -149,7 +146,7 @@ import (
 				#config: config
 				#role:   role
 			}
-			"Deployment/\(role)": #Deployment & {
+			"StatefulSet/\(role)": #StatefulSet & {
 				#config: config
 				#role:   role
 			}
