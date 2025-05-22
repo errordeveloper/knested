@@ -4,8 +4,12 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+# validation of these downward API data doesn't seem very fruitful, the script would just
+# have to fail, but there isn't anywhere for such failure to be observed easily
 cluster="$(sed -n 's|^knested.dev/cluster="\(.*\)"$|\1|p' "/etc/kubeadm/metadata/labels")"
 namespace="$(cat "/etc/kubeadm/metadata/namespace")"
+# systemd doesn't pass environment variables to services, this is one way to get them
+pod_ip="$(cat /proc/1/environ | tr '\0' '\n' | sed -n 's/^KNESTED_POD_IP=\(.*\)$/\1/p')"
 
 get_secret() {
   kubectl get secret \
@@ -117,13 +121,11 @@ kubeadm init --v=9 \
 
 
 # store IP address of the control plane pod in a configmap that Cilium could consume
-if [ -n "${KNESTED_POD_IP+x}" ] ; then
-  kubectl create configmap \
-    --kubeconfig="/etc/kubernetes/admin.conf" \
-    --namespace="kube-system" \
-    "knested-apiserver-config" \
-    --from-literal="kube-apiserver-pod-ip=${KNESTED_POD_IP}"
-fi
+kubectl create configmap \
+  --kubeconfig="/etc/kubernetes/admin.conf" \
+  --namespace="kube-system" \
+  "knested-apiserver-config" \
+  --from-literal="kube-apiserver-pod-ip=${pod_ip}"
 
 # install manifest bundles
 
