@@ -75,6 +75,10 @@ import (
 						name:  "CONTAINER_RUNTIME_ENDPOINT"
 						value: "unix:///run/containerd/containerd.sock"
 					},
+					{
+						name: "KNESTED_POD_IP"
+						valueFrom: fieldRef: fieldPath: "status.podIP"
+					},
 				]
 
 				ports: [{

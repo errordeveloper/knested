@@ -7,7 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	timoniv1 "timoni.sh/core/v1alpha1"
 
-	"github.com/errordeveloper/knested/manifests/cilium-1.16.5:cilium"
+	"github.com/errordeveloper/knested/manifests/cilium-1.18.0-pre.2:cilium"
 )
 
 // Config defines the schema and defaults for the Instance values.
