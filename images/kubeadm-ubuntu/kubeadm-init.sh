@@ -115,6 +115,16 @@ kubeadm init --v=9 \
   --config=/etc/kubernetes/kubeadm-init.yaml \
   --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap
 
+
+# store IP address of the control plane pod in a configmap that Cilium could consume
+if [ -n "${KNESTED_POD_IP+x}" ] ; then
+  kubectl create configmap \
+    --kubeconfig="/etc/kubernetes/admin.conf" \
+    --namespace="kube-system" \
+    "knested-apiserver-config" \
+    --from-literal="kube-apiserver-pod-ip=${KNESTED_POD_IP}"
+fi
+
 # install manifest bundles
 
 apply_manifests_with_rety /etc/kubeadm/manifests/init
