@@ -32,6 +32,9 @@ import (
 			}
 		}
 		serviceName: roleConfig.metadata.name
+		if roleAlias == "node" {
+			podManagementPolicy: "Parallel"
+		}
 		volumeClaimTemplates: [{
 			metadata: {
 				name:   "data"
@@ -44,6 +47,10 @@ import (
 				resources: requests: storage: "5Gi"
 			}
 		}]
+		persistentVolumeClaimRetentionPolicy: {
+			whenDeleted: "Delete"
+			whenScaled:  "Delete"
+		}
 	}
 
 	spec: template: spec: corev1.#PodSpec & {
