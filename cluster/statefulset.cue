@@ -153,6 +153,7 @@ _readinessProbes: {
 	controlPlane: [
 		_metadataVolume,
 		for v in _hostPathVolumes {v},
+		for v in _emptyDirVolumes {v},
 		{
 			// TODO: make this part of the projected `/etc/kubeadm` volume
 			// also generate the contets of kubeconfig from here
@@ -183,6 +184,7 @@ _readinessProbes: {
 	node: [
 		_metadataVolume,
 		for v in _hostPathVolumes {v},
+		for v in _emptyDirVolumes {v},
 		{
 			// TODO: make this part of the projected `/etc/kubeadm` volume
 			// also generate the contets of kubeconfig from here
@@ -206,6 +208,7 @@ _roleVolumeMounts: {
 		_metadataVolumeMount,
 		for x in _hostPathVolumeMounts {x},
 		for x in _persistedVolumeMounts {x},
+		for x in _emptyDirVolumeMounts {x},
 		{
 			name:      "parent-management-cluster-service-account-token"
 			mountPath: "/etc/parent-management-cluster/secrets"
@@ -233,6 +236,7 @@ _roleVolumeMounts: {
 		_metadataVolumeMount,
 		for x in _hostPathVolumeMounts {x},
 		for x in _persistedVolumeMounts {x},
+		for x in _emptyDirVolumeMounts {x},
 		{
 			name:      "join-secret"
 			mountPath: "/etc/kubeadm/secrets"
@@ -306,5 +310,36 @@ _persistedVolumeMounts: [
 		name:      "data"
 		mountPath: "/var/lib/containerd"
 		subPath:   "var-lib-containerd"
+	},
+]
+
+_emptyDirVolumes: [
+	{
+		name: "run"
+		emptyDir: medium: "Memory"
+	},
+	{
+		name: "run-netns"
+		emptyDir: {}
+	},
+	{
+		name: "tmp"
+		emptyDir: medium: "Memory"
+	},
+]
+
+_emptyDirVolumeMounts: [
+	{
+		name:      "run"
+		mountPath: "/run"
+	},
+	{
+		name:             "run-netns"
+		mountPath:        "/run/netns"
+		mountPropagation: "HostToContainer"
+	},
+	{
+		name:      "tmp"
+		mountPath: "/tmp"
 	},
 ]
