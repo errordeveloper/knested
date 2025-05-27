@@ -337,8 +337,8 @@ EOF
 
 cat > /etc/systemd/system/kubeadm@.service << EOF
 [Unit]
-After=images.service
-Requires=images.service
+After=images.service containerd.service
+Requires=images.service containerd.service
 
 [Install]
 WantedBy=kubeadm@%i.target
@@ -494,7 +494,7 @@ failSwapOn: false
 # would need to be made, there are many options to it...
 resolvConf: /etc/resolv.conf
 EOF
-ln -s /usr/share/kubernetes/kubelet.yaml /etc/kubernetes/kubelet.yaml
+ln -f -s /usr/share/kubernetes/kubelet.yaml /etc/kubernetes/kubelet.yaml
 
 systemctl enable kubelet detect-cgroup-root
 
