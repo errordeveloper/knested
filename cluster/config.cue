@@ -49,7 +49,7 @@ import (
 	runtimeClass?: string
 
 	node: {
-		replicas: *1 | int & >0
+		replicas: *1 | int & >=0
 
 		defaultResources: {
 			cpu:    *"2000m" | timoniv1.#CPUQuantity
