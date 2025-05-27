@@ -39,7 +39,6 @@ apply_manifests_with_rety() {
   done
 }
 
-
 if [ -e /etc/kubernetes/kubeadm-init.yaml ] \
   && [ -n "$(get_secret "${cluster}-join-token" --output="jsonpath={.data.ca_hash}")" ] \
   && [ -n "$(get_secret "${cluster}-kubeconfig" --output="jsonpath={.data.kubeconfig}")" ] ; then
@@ -115,10 +114,14 @@ conntrack:
   maxPerCore: 0
 EOF
 
-kubeadm init --v=9 \
-  --config=/etc/kubernetes/kubeadm-init.yaml \
+kubeadm_init_args=(
+  --config=/etc/kubernetes/kubeadm-init.yaml
   --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap
+)
 
+until kubeadm init phase preflight "${kubeadm_init_args[@]}" ; do sleep 0.5 ; done
+
+kubeadm init --v=9 "${kubeadm_init_args[@]}"
 
 # store IP address of the control plane pod in a configmap that Cilium could consume
 kubectl create configmap \

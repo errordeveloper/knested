@@ -15,9 +15,14 @@ until [ -e "${token_path}" ] && [ -e "${ca_hash_path}" ] ; do sleep 0.5 ; done
 token="$(cat /etc/kubeadm/secrets/token)"
 ca_hash="$(cat /etc/kubeadm/secrets/ca_hash)"
 
-kubeadm join --v=9 \
-  --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap \
-  --token="${token}"  \
-  --discovery-token-ca-cert-hash="${ca_hash}"  \
-  --cri-socket=/var/run/containerd/containerd.sock \
-    "${cluster}:6443"
+kubeadm_join_args=(
+  --ignore-preflight-errors=NumCPU,SystemVerification,FileContent--proc-sys-net-bridge-bridge-nf-call-iptables,Swap
+  --token="${token}"
+  --discovery-token-ca-cert-hash="${ca_hash}"
+  --cri-socket=/var/run/containerd/containerd.sock
+  "${cluster}:6443"
+)
+
+until kubeadm join phase preflight "${kubeadm_join_args[@]}" ; do sleep 0.5 ; done
+
+kubeadm join --v=9 "${kubeadm_join_args[@]}"
