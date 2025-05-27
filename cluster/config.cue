@@ -51,28 +51,26 @@ import (
 	node: {
 		replicas: *1 | int & >=0
 
-		defaultResources: {
+		#defaultResources: timoniv1.#ResourceRequirement & {
 			cpu:    *"2000m" | timoniv1.#CPUQuantity
 			memory: *"8200Mi" | timoniv1.#MemoryQuantity
 		}
-
 		resources: timoniv1.#ResourceRequirements & {
-			requests: defaultResources
-			limits:   defaultResources
+			requests: #defaultResources
+			limits:   #defaultResources
 		}
 	}
 
 	controlPlane: {
 		replicas: *1 | int & 1
 
-		defaultResources: {
+		#defaultResources: timoniv1.#ResourceRequirement & {
 			cpu:    *"2000m" | timoniv1.#CPUQuantity
 			memory: *"5200Mi" | timoniv1.#MemoryQuantity
 		}
-
 		resources: timoniv1.#ResourceRequirements & {
-			requests: defaultResources
-			limits:   defaultResources
+			requests: #defaultResources
+			limits:   #defaultResources
 		}
 	}
 
