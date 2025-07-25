@@ -5,9 +5,12 @@ One could use kind in a pod, but if they need to run several nodes, the pod will
 large. So knested is very much like kind in a pod, but it uses a pod for each node, so it should
 easier to scale it.
 
-knested is similar to vCluster, accept it doesn't provide any syncronisation with underlying cluster.
-knested only leverages underlying cluster for deployment - secrets, downwards API and PVC, it doesn't
-continuously enforce any relationships between underlying cluster.
+knested is comparable to vCluster, however it doesn't provide any syncronisation with the host cluster
+and is completetly isolated from it. knsester user can choose any Kubernetes version or CNI implementation,
+while vCluster binds version and is dependant on CNI implementation provided by the host cluster.
+knested only leverages underlying cluster for deployment, in the same way as any regular app would.
+There is no special relationship between nested cluster and the in the way, it only binds to a small set
+of resoruces that comprise the deployment.
 
 To deploy a cluster you need [Timoni](https://timoni.sh). You can run it on top of kind too!
 ```
@@ -33,15 +36,15 @@ $ timoni apply --namespace test-cluster tc-1 .
 11:44AM INF i:tc-1 > Secret/test-cluster/tc-1-join-token created
 11:44AM INF i:tc-1 > Secret/test-cluster/tc-1-kubeconfig created
 11:44AM INF i:tc-1 > Service/test-cluster/tc-1 created
-11:44AM INF i:tc-1 > Deployment/test-cluster/tc-1-cp created
-11:44AM INF i:tc-1 > Deployment/test-cluster/tc-1-node created
+11:44AM INF i:tc-1 > StatefulSet/test-cluster/tc-1-cp created
+11:44AM INF i:tc-1 > StatefulSet/test-cluster/tc-1-node created
 11:44AM INF i:tc-1 > PersistentVolumeClaim/test-cluster/tc-1-cp created
 11:47AM INF i:tc-1 > resources are ready
-$ kubectl exec -ti -n test-cluster deployment/tc-1-cp -- kubectl get nodes
+$ kubectl exec -ti -n test-cluster statefulset/tc-1-cp -- kubectl get nodes
 NAME                         STATUS   ROLES           AGE     VERSION
 tc-1-cp-7b7757f745-8f9ff     Ready    control-plane   7m1s    v1.30.3
 tc-1-node-5ddb9c8999-gqcv6   Ready    <none>          6m12s   v1.30.3
-$ kubectl exec -ti -n test-cluster deployment/tc-1-cp -- kubectl get pods -n kube-system
+$ kubectl exec -ti -n test-cluster statefulset/tc-1-cp -- kubectl get pods -n kube-system
 NAME                                               READY   STATUS    RESTARTS   AGE
 cilium-7dw7j                                       1/1     Running   0          6m24s
 cilium-n6j5q                                       1/1     Running   0          7m3s
