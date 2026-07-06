@@ -1,4 +1,4 @@
-# `knested`: Kubernetes-in-Kubernetes for GitOps-Cluster-as-Service
+# `knested`: a minimalist way to deploy Kubernetes in Kubernetes
 
 This project enables one to easily deploy Kubernetes into Kubernetes, akin to kind on Docker.
 One could use kind in a pod, but if they need to run several nodes, the pod will end up quite
