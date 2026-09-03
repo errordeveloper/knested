@@ -3,14 +3,14 @@
 This project enables one to easily deploy Kubernetes into Kubernetes, akin to kind on Docker.
 One could use kind in a pod, but if they need to run several nodes, the pod will end up quite
 large. So knested is very much like kind in a pod, but it uses a pod for each node, so it should
-easier to scale it.
+be easier to scale it.
 
-knested is comparable to vCluster, however it doesn't provide any syncronisation with the host cluster
-and is completetly isolated from it. knsester user can choose any Kubernetes version or CNI implementation,
-while vCluster binds version and is dependant on CNI implementation provided by the host cluster.
+knested is comparable to vCluster, however it doesn't provide any synchronisation with the host cluster
+and is completetly isolated from it. knested user can choose any Kubernetes version or CNI implementation,
+while vCluster binds to the host cluster version and is dependant on the underlying CNI implementation.
 knested only leverages underlying cluster for deployment, in the same way as any regular app would.
-There is no special relationship between nested cluster and the in the way, it only binds to a small set
-of resoruces that comprise the deployment.
+There is no special relationship between nested cluster and the host, and no CRDs. It can run in ordinary
+containers, or use VM-based runtime.
 
 To deploy a cluster you need [Timoni](https://timoni.sh). You can run it on top of kind too!
 ```
