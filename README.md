@@ -19,7 +19,7 @@ knested is comparable to vCluster, but there are a few key distinctions:
       - independent of what host cluster runs
   - much simpler model: all knested nodes are pods in host cluster
       - no private or shared nodes
-  - multiplexing: a very large single host node can many multi-node knested clusters
+  - multiplexing: a very large single host node can run many multi-node knested clusters
 
 The node pods can run as ordinary containers or use a VM-based runtime.
 Cilium is the default CNI, using another CNI should be possible, but may require testing.
