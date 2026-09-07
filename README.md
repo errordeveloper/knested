@@ -1,5 +1,7 @@
 # `knested`: a minimalist way to deploy Kubernetes in Kubernetes
 
+<img src="kea.png" alt="Kea's nest" width="30%">
+
 This project deploys Kubernetes into Kubernetes, akin to kind on Docker. Instead of using a container
 runtime as a host for the whole cluster, resulting in a large VM or container, knested creates one pod
 per node, making clusters of any size easier to deploy.
