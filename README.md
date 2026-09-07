@@ -91,7 +91,7 @@ To deploy a cluster you need [Timoni](https://timoni.sh). You can run the cluste
 ```
 git clone https://github.com/errordeveloper/knested
 cd knested
-timoni apply --namespace test-cluster tc-1
+timoni apply --namespace test-cluster tc-1 .
 ```
 
 Here is what the output will look like:
@@ -195,10 +195,3 @@ Node and control-plane resource requests and limits, the Service type, image pul
 placement settings and optional extra manifests can all be configured through module values. Cilium bootstrap
 manifests are bundled under [`manifests/`](manifests/); use [`scripts/import-cilium.sh`](scripts/import-cilium.sh)
 to import a different Cilium chart version, then update the Cilium import in [`cluster/config.cue`](cluster/config.cue).
-
-To deploy a cluster you need Timoni. You can run it on top of kind too!
-```
-git clone https://github.com/errordeveloper/knested
-cd knested
-timoni apply --namespace test-cluster tc-1 .
-```
